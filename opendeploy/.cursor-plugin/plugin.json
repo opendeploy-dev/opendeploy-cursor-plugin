@@ -1,0 +1,36 @@
+{
+  "name": "opendeploy",
+  "displayName": "OpenDeploy",
+  "version": "0.0.1",
+  "description": "OpenDeploy skills for Cursor: one-click deploy autoplan plus CLI-first skills for auth, env, database, monorepo, domain, debug, ops, alarms, oncall, volume, and config.",
+  "author": {
+    "name": "OpenDeploy",
+    "email": "security@opendeploy.dev"
+  },
+  "publisher": "opendeploy-dev",
+  "homepage": "https://opendeploy.dev",
+  "repository": "https://github.com/opendeploy-dev/opendeploy-cursor-plugin",
+  "license": "MIT",
+  "logo": "assets/logo.svg",
+  "keywords": [
+    "opendeploy",
+    "deploy",
+    "deployment",
+    "cli",
+    "oncall",
+    "discord",
+    "postgres",
+    "mysql",
+    "mongodb",
+    "redis"
+  ],
+  "category": "developer-tools",
+  "tags": [
+    "deployment",
+    "hosting",
+    "agent",
+    "database",
+    "debug"
+  ],
+  "skills": "./skills/"
+}

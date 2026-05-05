@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">OpenDeploy</title>
+  <desc id="desc">OpenDeploy logo mark with OD monogram.</desc>
+  <rect width="512" height="512" rx="96" fill="#111827"/>
+  <path d="M144 174h92c58 0 102 40 102 82s-44 82-102 82h-92V174zm46 42v80h46c31 0 54-18 54-40s-23-40-54-40h-46z" fill="#ffffff"/>
+  <path d="M294 174h74c48 0 82 33 82 82s-34 82-82 82h-74v-42h72c24 0 38-16 38-40s-14-40-38-40h-72v-42z" fill="#34d399"/>
+  <path d="M88 256c0-95 73-168 168-168 48 0 91 20 122 52l-32 30c-23-24-55-38-90-38-70 0-124 54-124 124s54 124 124 124c36 0 68-14 91-39l32 30c-31 33-75 53-123 53-95 0-168-73-168-168z" fill="#60a5fa"/>
+</svg>

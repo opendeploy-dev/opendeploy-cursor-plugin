@@ -1,0 +1,17 @@
+{
+  "name": "opendeploy",
+  "owner": {
+    "name": "OpenDeploy",
+    "email": "security@opendeploy.dev"
+  },
+  "metadata": {
+    "description": "OpenDeploy Cursor plugin marketplace for deploy, setup, auth, env, database, domain, debug, ops, alarms, oncall, API, config, and context skills."
+  },
+  "plugins": [
+    {
+      "name": "opendeploy",
+      "source": "opendeploy",
+      "description": "Deploy and manage apps with OpenDeploy from Cursor."
+    }
+  ]
+}
