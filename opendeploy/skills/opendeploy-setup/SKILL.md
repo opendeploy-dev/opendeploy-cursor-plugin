@@ -41,7 +41,8 @@ Plugin question:
 
 - `Update plugin now (Recommended)` — run the current host agent's plugin update command, then tell the user the new skill normally takes effect in the next session:
   - Claude: `claude plugin marketplace update opendeploy`, then `claude plugin update opendeploy@opendeploy`
-  - Codex: `codex plugin marketplace add opendeploy-dev/opendeploy-codex-plugin --ref main`
+  - Codex: `codex plugin marketplace upgrade opendeploy`
+  - OpenClaw: `openclaw plugins update opendeploydev` (or `openclaw plugins update clawhub:opendeploydev` if updating by recorded ClawHub spec), then run `openclaw gateway restart`; OpenClaw prints `Restart the gateway to load plugins and hooks` after updating. If the agent session still does not see the new skill text, start a new session.
 - `Use installed plugin for this run` — continue with the loaded skill.
 
 CLI question:
