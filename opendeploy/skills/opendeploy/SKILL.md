@@ -208,6 +208,30 @@ options:
 If the user chooses upgrade, return this URL exactly and stop mutation until
 they come back: `https://dashboard.opendeploy.dev/settings`.
 
+Do not report a quota block as only "HTTP 403 Resource quota exceeded." Inspect
+the CLI stderr or API body for `exceeded_resources` and `available_addons`, then
+tell the user which resource exceeded quota, the current/requested/limit values,
+and any matching add-on name, quantity, and price/currency. If the payload lacks
+those fields, say the API did not identify the exact resource and check the
+quota/add-on endpoints before recommending a generic upgrade.
+
+When `exceeded_resources` is present, treat the backend result as authoritative:
+it already calculated the effective limit including any add-ons. Do not second
+guess the quota math or probe smaller resources by default. Use this mapping:
+
+| resource signal | tell the user | first recommendation |
+|---|---|---|
+| `storage` | Persistent-volume storage is over the effective plan + add-on cap. Include current/requested/limit and the matching storage add-on from `available_addons` when present. | Upgrade storage/plan |
+| `cpu`, `memory` | Compute capacity is over the effective plan + add-on cap. Include current/requested/limit. | Upgrade compute/plan |
+| `replicas` | Replica count exceeds the plan cap. | Upgrade plan, or reduce replicas only if user chooses adjustment |
+| `projects`, `services`, `custom_domains`, `domains` | Account object count is over the cap. | Upgrade plan, or remove unused resources only if user chooses adjustment |
+| `deployments`, `daily_deployments` | Deployment count quota is exhausted for the current period/window. | Upgrade plan; wait/reset is an adjustment option |
+| `bandwidth`, `data_transfer` | Traffic quota is exhausted. | Upgrade bandwidth/plan |
+
+If `available_addons` contains an entry matching the exceeded resource, name it
+plainly (for example: "Storage add-on: 100 GB, $X/mo"). If not, say "No matching
+add-on was returned; use the usage settings page to upgrade the plan."
+
 ## Before The First Deploy
 
 Tell the user these facts before the first mutation when they have not already
@@ -871,10 +895,11 @@ These rules exist to reduce failed builds and redeploy loops:
   patch itself after services exist; do not ask the user to copy/paste
   `opendeploy services env patch` command blocks as the normal path.
 - If adding an OpenDeploy volume returns `403 quota_exceeded`, do not probe
-  smaller sizes by default. Ask with `Upgrade plan (Recommended)` first and
-  return `https://dashboard.opendeploy.dev/settings` if chosen. Only
-  retry with a smaller volume when the user explicitly chooses resource
-  adjustment.
+  smaller sizes by default. Report the storage resource details from
+  `exceeded_resources` and the storage add-on quantity/price from
+  `available_addons` when present. Ask with `Upgrade plan (Recommended)` first
+  and return `https://dashboard.opendeploy.dev/settings` if chosen. Only retry
+  with a smaller volume when the user explicitly chooses resource adjustment.
 - Detect migration/bootstrap requirements before first deploy. If a fresh
   managed DB is created for Django/Rails/Laravel/Prisma/Drizzle/Alembic apps,
   plan the migration path before deployment creation. Prefer a platform
@@ -949,10 +974,11 @@ These rules exist to reduce failed builds and redeploy loops:
 - Do not fabricate language/framework/port. Empty or conflicting evidence should trigger a user question, not a guess.
 - Before retrying a failed deploy, identify what changed. No blind retry loops.
 - For quota/billing failures, retrying smaller values is not the default
-  strategy. Ask with `Upgrade plan (Recommended)` first and return
-  `https://dashboard.opendeploy.dev/settings` if chosen. Only shrink
-  CPU, memory, replicas, volume size, or other resources when the user chooses
-  an explicit resource-adjustment path.
+  strategy. First surface which resource exceeded quota and any matching add-on
+  price from `available_addons`; then ask with `Upgrade plan (Recommended)` and
+  return `https://dashboard.opendeploy.dev/settings` if chosen. Only shrink CPU,
+  memory, replicas, volume size, or other resources when the user chooses an
+  explicit resource-adjustment path.
 - If a mutating OpenDeploy command returns 502/503/504 after a long request,
   do a read-back before retrying. The resource may already exist or the source
   may already be bound. Retry only when `get/list/status` proves no state
