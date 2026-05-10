@@ -22,7 +22,7 @@ unless the CLI lacks a route or the user is explicitly debugging a backend issue
 If the user asks how to install this skill, point them to the marketplace:
 
 ```sh
-claude plugin marketplace add https://github.com/opendeploy-dev/opendeploy-skills
+claude plugin marketplace add https://github.com/opendeploy-dev/opendeploy-claude-plugin
 claude plugin install opendeploy@opendeploy
 ```
 
