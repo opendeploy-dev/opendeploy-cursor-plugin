@@ -1,6 +1,6 @@
 ---
 name: opendeploy-oncall
-version: "0.0.1"
+version: "0.0.2"
 description: |
   Get help from OpenDeploy staff through the user's private Discord support
   channel when a deploy fails, OpenDeploy has a platform/upload/CLI issue, or
