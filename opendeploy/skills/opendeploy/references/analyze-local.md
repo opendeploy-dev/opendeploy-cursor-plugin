@@ -37,6 +37,11 @@ Challenge these points:
   Dockerfiles wins over Vite/Webpack/SPA evidence.
 - `DATABASE_URL`, `REDIS_URL`, `MONGODB_URI`, `MYSQL_URL`, `POSTGRES_URL`, or
   host/user/password aliases are not assigned to the service that needs them.
+- AI SDK/provider usage is present but `ai_config` is empty, or detected AI key
+  vars are not assigned to the service that constructs the AI client. Capture
+  `requires_ai_api_key`, `detected_providers`, `api_key_vars`, and
+  `base_url_vars`, then ask about OpenDeploy AI API before asking for provider
+  key values.
 - `.env.example`, `.env.sample`, or placeholder values are treated as real
   user env.
 - a root Dockerfile is present but the plan ignores it, or no Dockerfile exists
@@ -103,6 +108,7 @@ Required evidence categories:
 - selected HTTP port and ignored secondary ports
 - build/start command or Dockerfile `CMD`/`ENTRYPOINT`
 - dependency decision and env aliases
+- AI API provider decision and env aliases (`api_key_vars`, `base_url_vars`)
 - persistent filesystem/object-storage requirement
 - required archive inclusions/exclusions
 - late-bound public URL env keys
@@ -269,7 +275,13 @@ Emit one object per service. For multi-service, wrap as `{"services":[...]}`. Sa
   "database_type": "postgres",
   "dependencies": ["postgres", "redis"],
   "runtime_vars":  [{"name":"DATABASE_URL","required":true,"default":""}],
-  "build_time_vars":[{"name":"NEXT_PUBLIC_API_URL","required":false,"default":""}]
+  "build_time_vars":[{"name":"NEXT_PUBLIC_API_URL","required":false,"default":""}],
+  "ai_config": {
+    "requires_ai_api_key": false,
+    "detected_providers": [],
+    "api_key_vars": [],
+    "base_url_vars": []
+  }
 }
 ```
 
@@ -414,6 +426,26 @@ Runtime/build split:
 - Dependency env from managed DB/cache belongs in `runtime_variables` unless a
   build step explicitly connects to the dependency. Avoid build-time DB access
   by default because it makes clean builds depend on live runtime services.
+
+**`ai_config`** - detect AI API usage generically:
+
+- Set `requires_ai_api_key: true` when AI SDK/provider dependencies, imports,
+  env keys, or docs indicate the selected service needs an AI provider key for
+  its deployed mode.
+- `detected_providers` should use provider names from evidence, such as
+  `openai`, `anthropic`, `gemini`, `google_ai`, `openrouter`, `groq`,
+  `mistral`, `deepseek`, `together`, `perplexity`, `dashscope`, `qwen`,
+  `volcengine`, `xai`, or the analyzer's provider strings.
+- `api_key_vars` should include exact env key names such as `OPENAI_API_KEY`,
+  `ANTHROPIC_API_KEY`, `GEMINI_API_KEY`, `OPENROUTER_API_KEY`, `GROQ_API_KEY`,
+  or analyzer-provided names.
+- `base_url_vars` should include paired base URL names such as
+  `OPENAI_BASE_URL`, `OPENAI_API_BASE`, `ANTHROPIC_BASE_URL`, or
+  analyzer-provided names.
+- Do not classify OAuth/payment/storage/SMTP secrets as AI merely because they
+  end in `_TOKEN` or `_KEY`. Tie generic suffixes to provider/package evidence.
+- If AI keys are build-time-only, add a `build_time_blocker` note in the deploy
+  attempt record. Do not plan the OpenDeploy AI API placeholder for build vars.
 
 If required env keys remain unresolved after managed dependency env and
 generated app credentials, surface an env-source question before service

@@ -32,6 +32,12 @@ GStack's workflow style than to an opaque one-shot deploy API.
   "services": [],
   "dependencies": [],
   "env_contract": {},
+  "ai_config": {
+    "requires_ai_api_key": false,
+    "detected_providers": [],
+    "api_key_vars": [],
+    "base_url_vars": []
+  },
   "ports": {},
   "package_manager": {
     "name": "",
@@ -101,6 +107,11 @@ Plan must inspect:
 - service `PORT` env
 - runtime env keys
 - build-time env keys
+- AI API env needs. Carry `ai_config.requires_ai_api_key`,
+  `detected_providers`, `api_key_vars`, and `base_url_vars` from analyzer output
+  when present, then verify against source/package/env evidence. If AI keys are
+  needed, ask whether to use OpenDeploy AI API before asking the user to provide
+  provider keys. See `references/ai-api.md`.
 - runtime/build env separation: runtime keys are for the running process, build
   keys are for image/build commands. The two maps must not be identical unless
   source evidence proves every key is consumed in both phases, which is rare.
@@ -383,6 +394,14 @@ generated app secret, manual user value, or user-approved boot-safe placeholder
 for integrations that are not needed for the first smoke test. Do not create a
 deployment just to discover missing env one crash at a time.
 
+AI API keys have a dedicated first-choice path. If `ai_config` or source review
+detects AI provider key vars, ask whether to use OpenDeploy AI API. For that
+choice, put `{{MINIONS_AI_API_KEY}}` only in `runtime_variables` for the detected
+AI key vars and `https://api.opendeploy.dev/v1` only in `runtime_variables` for
+paired base URL vars. Do not put the AI Hub placeholder in `build_variables`; if
+the app performs AI provider calls during build, ask for user-provided build-time
+values or patch the build to defer provider access to runtime.
+
 When writing service or deployment bodies, carry the two maps through unchanged:
 `runtime_variables` stays runtime-only and `build_variables` stays build-only.
 Do not use "same object for both" as a convenience fallback. Deployment history
@@ -424,6 +443,7 @@ Merge order:
 local plan defaults
 + user real non-empty env values
 + DB generated env
++ user-approved OpenDeploy AI API runtime placeholders/base URLs
 + explicit user-approved conflict override
 ```
 
@@ -432,5 +452,7 @@ Rules:
 - Empty user env cannot override DB env.
 - Placeholder values cannot override DB env.
 - `.env.example` cannot override managed dependency env.
+- OpenDeploy AI API placeholders may override empty/example AI provider key
+  values only after the user chose `Use OpenDeploy AI API`.
 - If real user `DATABASE_URL` conflicts with managed DB URL, ask whether to
   use managed DB, use external DB, or cancel and edit env.
