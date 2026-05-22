@@ -396,7 +396,7 @@ deployment just to discover missing env one crash at a time.
 
 AI API keys have a dedicated first-choice path. If `ai_config` or source review
 detects AI provider key vars, ask whether to use OpenDeploy AI API. For that
-choice, put `{{MINIONS_AI_API_KEY}}` only in `runtime_variables` for the detected
+choice, put `{{OPENDEPLOY_AI_API_KEY}}` only in `runtime_variables` for the detected
 AI key vars and `https://api.opendeploy.dev/v1` only in `runtime_variables` for
 paired base URL vars. Do not put the AI Hub placeholder in `build_variables`; if
 the app performs AI provider calls during build, ask for user-provided build-time

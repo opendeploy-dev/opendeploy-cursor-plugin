@@ -1,6 +1,6 @@
 ---
 name: opendeploy-env
-version: "0.0.4"
+version: "0.0.5"
 description: Scan, upload, patch, unset, rotate, or reconcile OpenDeploy environment variables and secrets. Use when the user says .env upload, env vars, environment variables, config vars, secrets, import env, sync env, env diff, set env, unset env, remove env key, rotate secret, AI API key, OpenAI key, Anthropic key, Gemini key, DATABASE_URL, REDIS_URL, MONGODB_URI, or asks to sync env into a service.
 user-invokable: true
 ---
@@ -64,7 +64,7 @@ path, and do not paste placeholder secret values into transcripts.
 AI API keys are special: if the project uses OpenAI/Gemini/Anthropic/
 OpenRouter/Groq/etc. env keys, offer OpenDeploy AI API before asking the user to
 provide provider key values. When the user chooses OpenDeploy AI API, set the
-detected AI key runtime vars to `{{MINIONS_AI_API_KEY}}` and paired base URL
+detected AI key runtime vars to `{{OPENDEPLOY_AI_API_KEY}}` and paired base URL
 runtime vars to `https://api.opendeploy.dev/v1`; backend provisioning replaces
 the placeholder with the real project token. Do not place this placeholder in
 `build_variables`. If the AI key is required during build, ask for user-provided

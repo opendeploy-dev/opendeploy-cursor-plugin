@@ -1,6 +1,6 @@
 ---
 name: opendeploy-context
-version: "0.0.4"
+version: "0.0.5"
 description: Resolve, save, or inspect OpenDeploy project/service/deployment context. Use when the user says existing project, saved IDs, project id, service id, deployment id, same service, same project, resume deploy, redeploy same service, avoid duplicate project, what project is this, or asks whether the current directory already has OpenDeploy context.
 user-invokable: true
 ---

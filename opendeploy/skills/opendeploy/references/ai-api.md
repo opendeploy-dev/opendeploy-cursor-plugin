@@ -4,7 +4,7 @@ OpenDeploy can provision a project-scoped AI API token when the agent submits
 the exact placeholder value in service runtime env:
 
 ```text
-{{MINIONS_AI_API_KEY}}
+{{OPENDEPLOY_AI_API_KEY}}
 ```
 
 The public base URL for OpenDeploy AI API is:
@@ -21,7 +21,7 @@ https://api.opendeploy.dev/v1
   - `api_key_vars`
   - `base_url_vars`
 - The dashboard's guided deploy defaults detected AI key vars to OpenDeploy AI
-  API and sends `{{MINIONS_AI_API_KEY}}`.
+  API and sends `{{OPENDEPLOY_AI_API_KEY}}`.
 - The backend expands that placeholder during project env save and service
   runtime-variable create/update. It provisions or reuses a project token,
   stores the real token securely, creates/updates AIHubKey tracking, and forces
@@ -87,7 +87,7 @@ If the app cannot boot without AI keys, replace `Continue without AI` with
 For `Use OpenDeploy AI API`:
 
 - Add each `ai_config.api_key_vars[]` key to the service `runtime_variables`
-  map with value `{{MINIONS_AI_API_KEY}}`.
+  map with value `{{OPENDEPLOY_AI_API_KEY}}`.
 - Add each `ai_config.base_url_vars[]` key to the service `runtime_variables`
   map with value `https://api.opendeploy.dev/v1`.
 - If source evidence proves a standard provider base URL var is supported but
