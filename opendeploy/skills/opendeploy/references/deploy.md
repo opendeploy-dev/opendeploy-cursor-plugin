@@ -530,18 +530,21 @@ asking for the next action.
 Print exactly:
 
 ```text
-## Deployment successful
+## Deployment successful — bind required
 
-**Live URL:** <APP_URL>
+### Step 1: Bind project (important)
 
-### Bind this deployment
-
-Open the link below in your browser and sign in via SSO to bind this
-deployment to your opendeploy account. The token in `~/.opendeploy/auth.json`
-keeps working afterwards. Redeploys from this machine will not prompt again.
-The deployment is garbage-collected after **6 hours** if you do not bind it.
+Open the bind link below in your browser and sign in via SSO. If you do not
+bind the project, OpenDeploy will garbage-collect it after **6 hours** and the
+live URL will stop working.
 
 **Bind URL:** <BIND_URL>
+
+### Step 2: Check live URL
+
+After binding, open the live URL:
+
+**Live URL:** <APP_URL>
 
 **Project:** `<PROJECT_NAME>`
 **Service:** `<SERVICE_NAME>`
