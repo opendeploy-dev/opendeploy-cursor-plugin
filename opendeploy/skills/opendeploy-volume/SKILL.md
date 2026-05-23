@@ -1,6 +1,6 @@
 ---
 name: opendeploy-volume
-version: "0.0.6"
+version: "0.0.7"
 description: Manage persistent volumes on OpenDeploy services — add, list, resize (expand only), detach, restore, or hard-delete an orphaned volume. Use when the user says add volume, attach storage, persistent disk, persist data, mount a volume, resize disk, expand storage, detach volume, restore deleted volume, undelete volume, or "volume X is detached/orphaned/deletes in N days". Read this before mutating any volume — the first volume on an existing service triggers a destructive workload conversion with brief downtime, and the agent MUST surface that before applying.
 user-invokable: true
 ---

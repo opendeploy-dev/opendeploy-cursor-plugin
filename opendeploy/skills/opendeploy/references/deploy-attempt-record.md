@@ -66,7 +66,7 @@ prefer `null`, `[]`, or `"unknown"` over inventing data.
   "updated_at": "2026-05-15T00:00:00Z",
   "agent": {
     "host": "codex|claude|cursor|openclaw|unknown",
-    "skill_version": "0.0.6",
+    "skill_version": "0.0.7",
     "cli_version": "0.1.23"
   },
   "repo": {
