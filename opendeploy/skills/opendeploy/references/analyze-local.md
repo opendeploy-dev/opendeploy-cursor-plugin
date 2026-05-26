@@ -40,7 +40,7 @@ Challenge these points:
 - AI SDK/provider usage is present but `ai_config` is empty, or detected AI key
   vars are not assigned to the service that constructs the AI client. Capture
   `requires_ai_api_key`, `detected_providers`, `api_key_vars`, and
-  `base_url_vars`, then ask about OpenDeploy AI API before asking for provider
+  `base_url_vars`, then ask about OpenDeploy AI Hub before asking for provider
   key values.
 - `.env.example`, `.env.sample`, or placeholder values are treated as real
   user env.
@@ -108,7 +108,7 @@ Required evidence categories:
 - selected HTTP port and ignored secondary ports
 - build/start command or Dockerfile `CMD`/`ENTRYPOINT`
 - dependency decision and env aliases
-- AI API provider decision and env aliases (`api_key_vars`, `base_url_vars`)
+- AI Hub provider decision and env aliases (`api_key_vars`, `base_url_vars`)
 - persistent filesystem/object-storage requirement
 - required archive inclusions/exclusions
 - late-bound public URL env keys
@@ -427,7 +427,7 @@ Runtime/build split:
   build step explicitly connects to the dependency. Avoid build-time DB access
   by default because it makes clean builds depend on live runtime services.
 
-**`ai_config`** - detect AI API usage generically:
+**`ai_config`** - detect AI Hub / AI provider usage generically:
 
 - Set `requires_ai_api_key: true` when AI SDK/provider dependencies, imports,
   env keys, or docs indicate the selected service needs an AI provider key for
@@ -445,7 +445,7 @@ Runtime/build split:
 - Do not classify OAuth/payment/storage/SMTP secrets as AI merely because they
   end in `_TOKEN` or `_KEY`. Tie generic suffixes to provider/package evidence.
 - If AI keys are build-time-only, add a `build_time_blocker` note in the deploy
-  attempt record. Do not plan the OpenDeploy AI API placeholder for build vars.
+  attempt record. Do not plan the OpenDeploy AI Hub placeholder for build vars.
 
 If required env keys remain unresolved after managed dependency env and
 generated app credentials, surface an env-source question before service

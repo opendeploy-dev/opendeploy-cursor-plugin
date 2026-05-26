@@ -2,8 +2,8 @@
 
 The user-facing entrypoint is `/opendeploy ...` for every OpenDeploy task:
 deploy, env, DB/cache, domain, logs, health, restart, rollback, alarms, oncall,
-auth, setup, and updates. `/deploy` is only a short alias for `/opendeploy
-deploy ...`.
+auth, setup, and updates. `/deploy` and `/od` are short aliases for
+`/opendeploy deploy ...`.
 
 When the user invokes `/opendeploy ...`, stay in the main `opendeploy` skill and
 use this table as an internal handler map. Do not ask the user to re-run a
@@ -14,10 +14,12 @@ Specialist skills remain compatibility/debug entrypoints only.
 |---|---|
 | `deploy this`, `host this`, `publish this`, `ship this`, `launch this`, `make it live`, `preview this`, `put this online`, `give me a live URL` | `opendeploy` |
 | `/deploy` | `deploy` alias -> `opendeploy` |
+| `/od` | `od` alias -> `opendeploy` |
 | `install opendeploy`, `set up opendeploy`, `setup opendeploy`, `update opendeploy`, `upgrade opendeploy`, `activate opendeploy`, `check CLI`, `verify CLI`, `run doctor`, `npm install`, `npm latest`, `init project`, `stale CLI`, `stale plugin`, `doctor says update available` | `opendeploy-setup` |
 | `login`, `log in`, `sign in`, `auth`, `auth status`, `whoami`, `token`, `OpenDeploy token`, `local deploy credential`, `guest credential`, `dashboard token`, `bind account`, `account binding link`, `401` | `opendeploy-auth` |
 | `existing project`, `saved IDs`, `project id`, `service id`, `deployment id`, `same service`, `same project`, `resume deploy`, `what project is this`, `redeploy same service` | `opendeploy-context` |
-| `upload env`, `.env upload`, `environment variables`, `config vars`, `secrets`, `import env`, `sync env`, `env diff`, `rotate secret`, `unset env`, `remove env`, `delete env var`, `set DATABASE_URL`, `AI API key`, `OpenAI key`, `Anthropic key`, `Gemini key`, `use OpenDeploy AI API` | `opendeploy-env` |
+| `upload env`, `.env upload`, `environment variables`, `config vars`, `secrets`, `import env`, `sync env`, `env diff`, `rotate secret`, `unset env`, `remove env`, `delete env var`, `set DATABASE_URL`, `AI Hub key`, `OpenAI key`, `Anthropic key`, `Gemini key`, `use OpenDeploy AI Hub` | `opendeploy-env` |
+| `AI Hub`, `AI Hub credits`, `AI Hub balance`, `AI Hub usage`, `top up AI credits`, `auto-recharge`, `rotate AI Hub key`, `migrate to AI Hub`, `switch my OpenAI calls to AI Hub`, `consolidate LLM keys`, `one key across providers`, `OpenAI-compatible gateway`, `OPENDEPLOY_AI_API_KEY` | `opendeploy-ai-hub` |
 | `database`, `db`, `cache`, `add postgres`, `add postgresql`, `add mysql`, `add redis`, `add mongodb`, `connection string`, `dependency health`, `DATABASE_URL`, `REDIS_URL`, `MONGODB_URI` | `opendeploy-database` |
 | `monorepo`, `mono repo`, `workspace`, `pnpm workspace`, `turborepo`, `nx`, `docker-compose`, `compose`, `Procfile`, `multiple services`, `web and worker`, `worker`, `queue`, `cron`, `service split`, `root directory for app` | `opendeploy-monorepo` |
 | `build command`, `start command`, `root directory`, `app directory`, `Dockerfile path`, `builder`, `auto-builder`, `health check`, `resources`, `memory`, `CPU`, `service config` | `opendeploy-config` |
@@ -31,8 +33,8 @@ Specialist skills remain compatibility/debug entrypoints only.
 
 ## Alias behavior
 
-`deploy` is only a convenience alias. It must not contain its own deployment
-logic. It routes to the canonical `opendeploy` autoplan workflow.
+`deploy` and `od` are only convenience aliases. They must not contain their own
+deployment logic. They route to the canonical `opendeploy` autoplan workflow.
 
 ## Internal handoffs
 

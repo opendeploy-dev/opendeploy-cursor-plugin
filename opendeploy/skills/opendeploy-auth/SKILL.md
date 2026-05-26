@@ -1,6 +1,6 @@
 ---
 name: opendeploy-auth
-version: "0.0.7"
+version: "0.0.8"
 description: Manage OpenDeploy authentication. Use when the user says login, log in, sign in, auth, auth status, whoami, token, OpenDeploy token, dashboard token, local deploy credential, guest credential, anonymous credential, bind account, account binding link, credential rejected, 401, or asks to inspect credential binding state.
 user-invokable: true
 ---
@@ -36,7 +36,7 @@ opendeploy auth guest --name "$AGENT_DISPLAY_NAME" --json
 ```
 
 Choose `AGENT_DISPLAY_NAME` yourself before calling the command, such as
-`Codex on Ziyans-Air` or `Claude Code on Jeffs Mac`. It is display-only for the
+`Codex on Workstation` or `Claude Code on Laptop`. It is display-only for the
 account-binding page and user settings; it must not be used to match or verify
 auth.
 

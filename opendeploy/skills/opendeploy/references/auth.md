@@ -24,7 +24,7 @@ opendeploy auth guest --name "$AGENT_DISPLAY_NAME" --json
 
 Choose `AGENT_DISPLAY_NAME` yourself. Use a short human-friendly label that
 helps the user recognize this agent on the bind page, such as `Codex on
-Ziyans-Air`. The name is display-only, can be changed by the user later, and
+Workstation`. The name is display-only, can be changed by the user later, and
 must never be treated as an auth matching key.
 
 Inspect local deploy credential binding state:

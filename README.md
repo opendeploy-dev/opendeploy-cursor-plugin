@@ -33,6 +33,8 @@ Restart Cursor if prompted, then open Agent chat and type:
 
 ```text
 /opendeploy deploy this project.
+# or
+/od deploy this project.
 ```
 
 You can also ask naturally:
@@ -54,6 +56,8 @@ Restart Cursor, then use:
 
 ```text
 /opendeploy deploy this project.
+# or
+/od deploy this project.
 ```
 
 ## Structure
@@ -64,6 +68,8 @@ Restart Cursor, then use:
 - `opendeploy/skills/` - Cursor skills synced from the canonical OpenDeploy skill source.
 - `opendeploy/skills/opendeploy/SKILL.md` - canonical OpenDeploy autoplan skill.
 - `opendeploy/skills/deploy/SKILL.md` - short alias skill.
+- `opendeploy/skills/od/SKILL.md` - shortest alias skill.
+- `opendeploy/skills/opendeploy-ai-hub/SKILL.md` - AI Hub management skill.
 
 ## Usage
 
@@ -71,13 +77,15 @@ In Cursor Agent chat, use:
 
 ```text
 /opendeploy deploy this project.
+# or
+/od deploy this project.
 ```
 
 If Cursor lists skills without a leading slash in your build, search for `opendeploy` in the slash command menu.
 
 ## Update
 
-Pull the latest repo changes, then restart Cursor or reinstall the plugin from the plugin settings.
+Pull the latest repo changes, then restart Cursor or reinstall the plugin from the plugin settings. The slash commands are `/opendeploy`, `/deploy`, and `/od`.
 
 ## License
 

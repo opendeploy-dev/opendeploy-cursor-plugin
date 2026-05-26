@@ -66,7 +66,7 @@ prefer `null`, `[]`, or `"unknown"` over inventing data.
   "updated_at": "2026-05-15T00:00:00Z",
   "agent": {
     "host": "codex|claude|cursor|openclaw|unknown",
-    "skill_version": "0.0.7",
+    "skill_version": "0.0.8",
     "cli_version": "0.1.23"
   },
   "repo": {
@@ -120,13 +120,16 @@ prefer `null`, `[]`, or `"unknown"` over inventing data.
       "generated_keys": ["SESSION_SECRET"],
       "secret_values_stored": false
     },
-    "ai_api": {
+    "ai_hub": {
       "requires_ai_api_key": false,
       "detected_providers": [],
       "api_key_vars": [],
       "base_url_vars": [],
       "evidence": [],
-      "user_choice": "not_needed|opendeploy_ai_api|own_keys|skip|paused",
+      "user_choice": "not_needed|opendeploy_ai_hub|own_keys|skip|paused",
+      "provisioned": false,
+      "key_propagated": false,
+      "local_files_written": [],
       "runtime_variables_set": [],
       "build_time_blockers": []
     }
@@ -199,9 +202,9 @@ Do not create project-specific categories. Put project-specific detail in
 ## Redaction
 
 - Store env key names, never env values.
-- For AI API, store provider names, env key names, evidence paths/snippets, and
+- For AI Hub, store provider names, env key names, evidence paths/snippets, and
   the selected mode only. Never store user provider key values or resolved
-  OpenDeploy AI API tokens.
+  OpenDeploy AI Hub tokens.
 - Redact passwords, tokens, API keys, bind signatures, cookies, private keys,
   and authorization headers from log excerpts.
 - Cap `log_excerpt` at roughly 4 KB. Prefer the shortest excerpt proving the

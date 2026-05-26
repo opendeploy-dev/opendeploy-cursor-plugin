@@ -305,7 +305,7 @@ Cancels an `open` session and unlinks the staging file. No-op-with-409 if the se
 ---
 
 ## Step 4.5 - POST `/v1/upload/update-source` (project-service)
-Bind the parked archive to an existing project. Copies the temp file into `/var/lib/minions/projects/<project_id>/<upload_uuid>/`, **enqueues async extraction**, and sets `project.original_file_path` + `project.source_status='extracting'`. The worker flips `source_path` + `source_status='ready'` once the ZIP is unpacked. Handler: `project-service/internal/handlers/upload.go` (`UpdateProjectSource`).
+Bind the parked archive to an existing project. Copies the temp file into the OpenDeploy project-source storage path, **enqueues async extraction**, and sets `project.original_file_path` + `project.source_status='extracting'`. The worker flips `source_path` + `source_status='ready'` once the ZIP is unpacked. Handler: `project-service/internal/handlers/upload.go` (`UpdateProjectSource`).
 
 Use this only when the archive is `<= 100 MiB`. Larger archives → Step 4-MP.
 
