@@ -1,6 +1,6 @@
 ---
 name: opendeploy-ops
-version: "0.0.8"
+version: "0.0.10"
 description: Inspect, monitor, alert on, and operate live OpenDeploy services. Use for read-only health/metrics/quota/circuit-breaker checks, alarm inspection, restart, stop, start, rollback, resize, cancel deployment, retry deployment, and other live-service operations. Use opendeploy-alarms for alarm lifecycle, notes, alarm-backed support engagement, and incident updates; use opendeploy-oncall for direct private Discord support channel handoff when no alarm exists. Read-only by default; mutations require explicit consent.
 allowed-tools:
   - AskUserQuestion

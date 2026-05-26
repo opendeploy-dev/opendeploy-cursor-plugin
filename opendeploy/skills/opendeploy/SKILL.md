@@ -1,6 +1,6 @@
 ---
 name: opendeploy
-version: "0.0.8"
+version: "0.0.10"
 description: One-click OpenDeploy autoplan skill for deploying projects from coding agents through the official versioned npm CLI (@opendeploydev/cli). Use when the user says deploy this, host this, publish this, ship this, launch this, make it live, preview this, redeploy, get a live URL, put this online, rotate env vars, add managed Postgres/MySQL/MongoDB/Redis, attach a persistent volume, persist data, mount persistent disk, persist uploads, persist SQLite, persist file-based queues, rename an OpenDeploy subdomain, bind a custom domain, debug a failed OpenDeploy deployment, check logs, check health, manage alarms, or get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails or the user has an OpenDeploy issue. This is the canonical OpenDeploy entrypoint; /deploy and /od are aliases. The first deploy is free, creates no OpenDeploy account, and requires no payment method; after explicit local deploy credential consent, the agent deploys and returns the live URL plus an optional account-binding link after the deployment is active. Guest-tier caps apply only before account binding — see "Limits" below.
 homepage: "https://opendeploy.dev"
 author: "OpenDeploy <security@opendeploy.dev>"
@@ -36,7 +36,7 @@ sensitive_inputs:
   - real .env values may be submitted to the OpenDeploy API as service env configuration after explicit key-only consent
   - GIT_TOKEN is sent only to the OpenDeploy gateway for private repository access
 metadata:
-  version: "0.0.8"
+  version: "0.0.10"
   category: deploy
   api_base: "https://dashboard.opendeploy.dev/api"
   cli_package: "@opendeploydev/cli"
@@ -203,13 +203,14 @@ Guest-tier caps (apply when `~/.opendeploy/auth.json` token kind is `local_deplo
 
 - Resource ceiling per service: free-plan CPU (millicores) and memory (bytes), enforced by the backend at `POST /v1/projects/:id/services`. Exceeding them returns `403 guest_quota_exceeded` with a `field` indicating `cpu_limit`, `memory_limit`, or `replicas`.
 - `replicas` is fixed to 1 per service for unbound local deploy credentials.
+- Project count: unbound local deploy credentials may have up to 10 live guest projects.
 - Custom domains require account binding; subdomain rename works without binding.
 - 6h idle GC: an unbound project with no activity is soft-deleted after 6 hours.
 
 The backend currently does not enforce a hard count cap on app services per
-project for unbound local deploy credentials — the limit emerges from the resource ceiling.
-The skill should still prefer 1–3 services per project and ask before going
-higher.
+project for unbound local deploy credentials — the service limit emerges from
+the resource ceiling. The skill should still prefer 1–3 services per project
+and ask before going higher.
 
 After binding via the URL printed at the end of the first deploy, the project
 survives independently of the local credential.

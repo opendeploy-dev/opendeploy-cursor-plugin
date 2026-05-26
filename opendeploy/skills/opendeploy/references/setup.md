@@ -58,8 +58,9 @@ after exactly one project id is resolved.
 opendeploy context save --project "$PROJECT_ID" --json
 ```
 
-For unbound local deploy credentials, the backend may limit the credential to one live
-guest project. Multi-service apps should fit inside that one project.
+For unbound local deploy credentials, the backend may limit the credential to 10
+live guest projects. Multi-service apps should still fit inside one project
+unless the repo truly contains separate deployable apps.
 
 ## Create Managed Dependencies
 
