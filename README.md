@@ -23,14 +23,13 @@ The split is intentional: **agents deploy, humans observe**. The agent registers
 
 ## Install
 
-During local development, link the plugin into Cursor's local plugins directory:
+In Cursor, open Agent chat and install the plugin from GitHub:
 
-```sh
-mkdir -p ~/.cursor/plugins/local
-ln -s /Users/ziyanhe/Desktop/workspace/opendeploy-cursor-plugin/opendeploy ~/.cursor/plugins/local/opendeploy
+```text
+/add-plugin https://github.com/opendeploy-dev/opendeploy-cursor-plugin
 ```
 
-Restart Cursor, then open Agent chat and type:
+Restart Cursor if prompted, then open Agent chat and type:
 
 ```text
 /opendeploy deploy this project.
@@ -42,10 +41,19 @@ You can also ask naturally:
 Deploy this project with OpenDeploy.
 ```
 
-After this repository is pushed, install it from Cursor with `/add-plugin` and the repository URL:
+For local development, clone this repo and link the plugin into Cursor's local plugins directory:
+
+```sh
+git clone https://github.com/opendeploy-dev/opendeploy-cursor-plugin.git
+cd opendeploy-cursor-plugin
+mkdir -p ~/.cursor/plugins/local
+ln -s "$PWD/opendeploy" ~/.cursor/plugins/local/opendeploy
+```
+
+Restart Cursor, then use:
 
 ```text
-https://github.com/opendeploy-dev/opendeploy-cursor-plugin
+/opendeploy deploy this project.
 ```
 
 ## Structure
