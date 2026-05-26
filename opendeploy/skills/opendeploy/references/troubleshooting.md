@@ -21,6 +21,10 @@ calls that depend on the open service.
 
 | Signal | Meaning | Next action |
 |---|---|---|
+| `npm view @opendeploydev/cli version` fails with `ENOTFOUND registry.npmjs.org`, `EAI_AGAIN`, timeout, or proxy/connect errors | npm registry path is blocked from the agent process, or the host has not granted network access | use `opendeploy-setup` -> "Agent Network / PATH / Proxy Repair"; retry once with approved network/escalated execution when available; do not keep reinstalling or switch to `npx` |
+| `opendeploy: command not found` in the agent, but the user's terminal has `opendeploy` | GUI agent did not inherit the terminal PATH, or the CLI was installed into a prefix not visible to the agent | check `command -v opendeploy || true`, common absolute paths, and `npm prefix -g`; if the external terminal works, ask for `command -v opendeploy` and `echo "$PATH"`, then set `launchctl setenv PATH "<PATH_FROM_WORKING_TERMINAL>"` and restart the agent |
+| `opendeploy status --json` / `preflight` fails with `fetch failed`, DNS, TLS, timeout, or proxy errors after the CLI is installed | the agent process cannot reach `https://dashboard.opendeploy.dev/api` | first rule out sandbox/network permission, then verify proxy env inside the agent; if needed, set GUI-process proxy variables with `launchctl setenv` and fully restart the agent |
+| User's external terminal reaches npm/OpenDeploy but the agent does not | external terminal success proves the machine can reach the network, not that the agent can deploy | use the terminal result only as evidence; do not ask the user to install/deploy externally unless they explicitly choose manual deploy. Verify network, PATH, proxy, and gateway health inside the agent before any deploy mutation |
 | Build failed | package/build command or missing build-time env | inspect build logs, fix cause, redeploy once |
 | Runtime crash | app boot, runtime env, port, DB/DNS | inspect service logs and service env keys |
 | Port mismatch | service config and runtime disagree | update service port or `PORT` env before retry |

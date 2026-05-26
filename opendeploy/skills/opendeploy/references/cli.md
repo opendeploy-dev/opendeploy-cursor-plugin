@@ -45,6 +45,10 @@ claude plugin update opendeploy@opendeploy
 # Codex
 codex plugin marketplace upgrade opendeploy
 
+# Cursor
+# Use Cursor plugin UI, or run this in Cursor Agent chat:
+/add-plugin https://github.com/opendeploy-dev/opendeploy-cursor-plugin
+
 # OpenClaw
 openclaw plugins update opendeploydev
 # If updating by the recorded ClawHub package spec:
@@ -143,10 +147,13 @@ If `update check` reports `updates.plugin_update_available`, use
 the user skips the plugin update, continue with the loaded plugin and record the
 skip. Then, if npm latest is newer than global or `update check` reports
 `cli.update_required_for_deploy` / `updates.cli_update_available`, use the same
-setup flow for the CLI question before project-specific analysis. If the user
-updates the CLI, rerun `update check` and preflight. If the user skips the CLI
-update, continue with the installed global CLI if it supports this workflow. If
-preflight reports plan issues, fix the plan before creating cloud resources.
+setup flow for the CLI question before project-specific analysis and make
+`Update global CLI and continue (Recommended)` the first option. Do not
+recommend skipping merely because the current command family appears compatible.
+If the user updates the CLI, rerun `update check` and preflight. If the user
+skips the CLI update, continue with the installed global CLI if it supports this
+workflow. If preflight reports plan issues, fix the plan before creating cloud
+resources.
 
 Progress-aware build watching and service create read-back require CLI `0.1.12+`.
 Smart source archives, deployment-auditor plan output, dependency credential
