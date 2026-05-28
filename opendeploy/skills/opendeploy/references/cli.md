@@ -34,8 +34,12 @@ inspection only. Ask the user before any mutating deploy step.
 ## Agent plugin updates
 
 When `opendeploy update check --json` or `opendeploy preflight . --json`
-reports a stale OpenDeploy skill/plugin, ask the plugin update question before
-any deploy mutation. Use the command for the current host:
+reports a stale OpenDeploy skill/plugin, inspect `plugin.installed_plugins[]`
+and `plugin.update_available_platforms[]` before acting. A machine can have
+Claude, Codex, Cursor, and OpenClaw installed at different versions; a current
+plugin on one host does not prove the other host plugins are current. Ask the
+plugin update question before deploy mutation when the current host is stale or
+the current host cannot be determined. Use the command for the stale host:
 
 ```bash
 # Claude Code
@@ -143,9 +147,12 @@ opendeploy preflight . --json
 ```
 
 If `update check` reports `updates.plugin_update_available`, use
-`opendeploy-setup` and recommend `Update plugin now` before the next step. If
-the user skips the plugin update, continue with the loaded plugin and record the
-skip. Then, if npm latest is newer than global or `update check` reports
+`opendeploy-setup`, name the stale platform(s) from
+`plugin.update_available_platforms[]`, and recommend `Update plugin now` before
+the next step when the current host is stale or unknown. If only other installed
+agent surfaces are stale, mention their update commands as housekeeping and
+continue the current deploy. If the user skips the plugin update, continue with
+the loaded plugin and record the skip. Then, if npm latest is newer than global or `update check` reports
 `cli.update_required_for_deploy` / `updates.cli_update_available`, use the same
 setup flow for the CLI question before project-specific analysis and make
 `Update global CLI and continue (Recommended)` the first option. Do not

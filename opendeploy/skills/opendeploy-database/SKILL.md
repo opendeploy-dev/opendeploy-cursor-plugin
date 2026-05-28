@@ -1,6 +1,6 @@
 ---
 name: opendeploy-database
-version: "0.0.10"
+version: "0.0.11"
 description: Plan, create, wait for, analyze, diagnose, query/inspect, temporarily expose, or rotate credentials on OpenDeploy managed Postgres, MySQL, MongoDB, and Redis dependencies. Use when the user says database, db, cache, Postgres, PostgreSQL, MySQL, MongoDB, Mongo, Redis, connection string, DATABASE_URL, REDIS_URL, MONGODB_URI, dependency health, dependency env, create DB, add Redis, debug managed dependency env injection, check a table, count users, inspect DB data, rotate database password, change DB password, reset DB credentials, or update database username.
 user-invokable: true
 ---

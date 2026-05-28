@@ -1,6 +1,6 @@
 ---
 name: opendeploy
-version: "0.0.10"
+version: "0.0.11"
 description: One-click OpenDeploy autoplan skill for deploying projects from coding agents through the official versioned npm CLI (@opendeploydev/cli). Use when the user says deploy this, host this, publish this, ship this, launch this, make it live, preview this, redeploy, get a live URL, put this online, rotate env vars, add managed Postgres/MySQL/MongoDB/Redis, attach a persistent volume, persist data, mount persistent disk, persist uploads, persist SQLite, persist file-based queues, rename an OpenDeploy subdomain, bind a custom domain, debug a failed OpenDeploy deployment, check logs, check health, manage alarms, or get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails or the user has an OpenDeploy issue. This is the canonical OpenDeploy entrypoint; /deploy and /od are aliases. The first deploy is free, creates no OpenDeploy account, and requires no payment method; after explicit local deploy credential consent, the agent deploys and returns the live URL plus an optional account-binding link after the deployment is active. Guest-tier caps apply only before account binding — see "Limits" below.
 homepage: "https://opendeploy.dev"
 author: "OpenDeploy <security@opendeploy.dev>"
@@ -36,7 +36,7 @@ sensitive_inputs:
   - real .env values may be submitted to the OpenDeploy API as service env configuration after explicit key-only consent
   - GIT_TOKEN is sent only to the OpenDeploy gateway for private repository access
 metadata:
-  version: "0.0.10"
+  version: "0.0.11"
   category: deploy
   api_base: "https://dashboard.opendeploy.dev/api"
   cli_package: "@opendeploydev/cli"
@@ -136,6 +136,20 @@ probe, auth, deploy, logs, or any fallback path; deploy execution stays on the
 global `opendeploy` command. If the global CLI is too old for a required command
 and the user declines the global update, continue only with supported global
 commands or stop before mutation.
+
+Plugin status is platform-aware. Newer CLIs return
+`plugin.installed_plugins[]`, `plugin.update_available_platforms[]`,
+`plugin.current_host_update_available`, and `plugin.preferred_platform`. When
+those fields exist, read them before trusting the top-level `plugin.platform`.
+Name the exact stale platforms (for example `claude`, `codex`, `cursor`, or
+`openclaw`) and use the matching command from `plugin.apply_commands`. A current
+Codex plugin does not prove the Claude plugin is current, and a current Claude
+plugin does not prove Cursor/OpenClaw are current. If the current host is known
+and `current_host_update_available` is `false` while only other installed
+platforms are stale, report that as housekeeping and do not block the current
+deploy on updating unrelated agent surfaces. If the current host is unknown,
+ask one plugin-update question that lists the stale platforms and the commands
+that will be run.
 
 If `opendeploy preflight` is unavailable because the installed global CLI is too
 old and the user skipped the update, continue with the older resource-command
@@ -305,7 +319,12 @@ git status, `doctor`, `routes list`, or hand-written version probes.
 from `update check --json` (or `preflight --json`):
 
 - `false` -> skip both prompts entirely; do not narrate the update logic to the user.
-- `plugin_update_available: true` -> surface the plugin prompt first; recommend updating before the next step.
+- `plugin_update_available: true` -> inspect `plugin.installed_plugins[]` /
+  `plugin.update_available_platforms[]`, name the stale agent platform(s), then
+  surface the plugin prompt first; recommend updating before the next step when
+  the current host is stale or unknown. If only non-current platforms are stale,
+  mention the update commands as optional housekeeping and continue the current
+  deploy.
 - `cli_update_available: true` (after the plugin is handled or explicitly skipped) -> surface the CLI prompt with `Update global CLI and continue deploy (Recommended)` as the first option. Never mark skip as recommended just because the current workflow appears compatible. If the user updates, rerun the full Quick State Check and continue. If declined, continue with the installed CLI after confirming the workflow does not need a command that only exists in the newer release.
 
 For CLI updates before deploy, `opendeploy-setup` presents this structured
