@@ -36,10 +36,11 @@ inspection only. Ask the user before any mutating deploy step.
 When `opendeploy update check --json` or `opendeploy preflight . --json`
 reports a stale OpenDeploy skill/plugin, inspect `plugin.installed_plugins[]`
 and `plugin.update_available_platforms[]` before acting. A machine can have
-Claude, Codex, Cursor, and OpenClaw installed at different versions; a current
-plugin on one host does not prove the other host plugins are current. Ask the
-plugin update question before deploy mutation when the current host is stale or
-the current host cannot be determined. Use the command for the stale host:
+Claude, Codex, Cursor, OpenClaw, and OpenCode installed at different versions; a
+current plugin on one host does not prove the other host plugins/skills are
+current. Ask the plugin update question before deploy mutation when the current
+host is stale or the current host cannot be determined. Use the command for the
+stale host:
 
 ```bash
 # Claude Code
@@ -57,6 +58,9 @@ codex plugin marketplace upgrade opendeploy
 openclaw plugins update opendeploydev
 # If updating by the recorded ClawHub package spec:
 openclaw plugins update clawhub:opendeploydev
+
+# OpenCode
+curl -fsSL https://raw.githubusercontent.com/opendeploy-dev/opendeploy-opencode/main/install.sh | bash
 ```
 
 For OpenClaw, the source of truth is the tracked plugin install record. The
@@ -70,6 +74,12 @@ is unchanged, OpenClaw may also print `opendeploydev already at the current vers
 that as a version-status line, not a deploy blocker. If the running OpenClaw
 agent still does not see the new skill text after gateway restart, start a new
 agent session.
+
+For OpenCode, OpenDeploy is distributed as native skills and slash commands,
+not as a marketplace plugin. The install script is intentionally idempotent:
+running it again updates `~/.agents/skills/*`, `~/.config/opencode/commands/*`,
+and the local OpenDeploy skill version marker. If the running OpenCode session
+still sees old skill text after the update, start a new session.
 
 Before preflight-driven deploy planning or any deploy mutation, offer to update
 when npm latest is newer than the installed global CLI. If the user declines,

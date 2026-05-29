@@ -1,6 +1,6 @@
 ---
 name: opendeploy-setup
-version: "0.0.11"
+version: "0.0.12"
 description: Install, update, verify, or repair the OpenDeploy CLI and local agent setup. Use when the user says install OpenDeploy, set up OpenDeploy, setup OpenDeploy, update OpenDeploy, upgrade OpenDeploy, check version, latest version, stale CLI, stale plugin, update CLI, update plugin, verify CLI, run doctor, prepare this agent, or fix OpenDeploy installation. This skill does not create projects unless the original user request also asks to deploy.
 user-invokable: true
 ---
@@ -50,7 +50,7 @@ When `opendeploy update check --json`, `opendeploy preflight --json`, or
 `opendeploy doctor --json` includes `plugin.installed_plugins[]`, treat plugin
 version status as per-agent-platform status, not a single global value. Inspect
 `plugin.update_available_platforms[]` and report the stale surfaces by name:
-Claude, Codex, Cursor, and/or OpenClaw. If the current host is known and
+Claude, Codex, Cursor, OpenClaw, and/or OpenCode. If the current host is known and
 `plugin.current_host_update_available` is `false`, do not block this host's
 setup/deploy only because another installed agent plugin is stale; give the
 other platform's update command as housekeeping. If the current host is stale
@@ -215,6 +215,7 @@ Plugin question:
   - Codex: `codex plugin marketplace upgrade opendeploy`
   - Cursor: reinstall/update from the Cursor plugin UI, or run `/add-plugin https://github.com/opendeploy-dev/opendeploy-cursor-plugin` in Cursor Agent chat.
   - OpenClaw: `openclaw plugins update opendeploydev` (or `openclaw plugins update clawhub:opendeploydev` if updating by recorded ClawHub spec), then run `openclaw gateway restart`; OpenClaw prints `Restart the gateway to load plugins and hooks` after updating. If the agent session still does not see the new skill text, start a new session.
+  - OpenCode: `curl -fsSL https://raw.githubusercontent.com/opendeploy-dev/opendeploy-opencode/main/install.sh | bash`; this installs or updates `~/.agents/skills/*` plus `~/.config/opencode/commands/*`. If the current OpenCode session still sees old skill text, start a new session.
 - `Use installed plugin for this run` — continue with the loaded skill.
 
 If `plugin.apply_commands` is present, prefer those exact commands; the CLI has
