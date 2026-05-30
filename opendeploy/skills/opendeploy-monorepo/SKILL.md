@@ -1,6 +1,6 @@
 ---
 name: opendeploy-monorepo
-version: "0.0.14"
+version: "0.0.15"
 description: Plan OpenDeploy service splits for monorepos, workspaces, docker-compose apps, web+worker apps, cron jobs, and multi-service projects. Use when the user says monorepo, workspace, pnpm workspace, turborepo, nx, multiple apps, multiple services, worker, queue, cron, docker-compose, compose, Procfile, web/API split, root directory, app directory, service split, or when OpenDeploy analysis detects more than one candidate service.
 user-invokable: true
 ---

@@ -469,6 +469,11 @@ with `final.status`, live URL, dashboard/bind URL, deployment id, and remaining
 caveats. If this was a retry, add a `fixes[]` entry describing the change and
 redeploy result.
 
+The Branch A/B block is the entire final answer. Do not append a second
+summary, "How it was deployed", "Notes", file-change lists, caveats, memory
+updates, or follow-up narration after the block. Put those details in the
+deploy-attempt record instead. The user action must stay visually dominant.
+
 ### Step 9.1 — DB-backed framework smoke test (mandatory for django/rails/laravel/phoenix/prisma/drizzle/alembic)
 
 If the deploy plan recorded a framework that requires schema migrations
@@ -555,6 +560,9 @@ After binding, use the dashboard project page to open the live app.
 **Deployment ID:** `<DEPLOYMENT_ID>`
 ```
 
+Stop here. Do not print the live URL, deployment method, project file changes,
+or any extra explanatory text after this block for unbound guest deploys.
+
 ### Branch B - account-bound credential
 
 Print exactly:
@@ -572,6 +580,9 @@ Print exactly:
 **Service ID:** `<SERVICE_ID>`
 **Deployment ID:** `<DEPLOYMENT_ID>`
 ```
+
+Stop here. Do not append deployment method, notes, or memory/refinement text
+after this block.
 
 If `is_bound` is absent or ambiguous, print only the live URL and say the bind
 state could not be determined. Do not fall back to the bind banner.

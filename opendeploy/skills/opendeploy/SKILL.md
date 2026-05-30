@@ -1,6 +1,6 @@
 ---
 name: opendeploy
-version: "0.0.14"
+version: "0.0.15"
 description: One-click OpenDeploy autoplan skill for deploying projects from coding agents through the official versioned npm CLI (@opendeploydev/cli). Use when the user says deploy this, host this, publish this, ship this, launch this, make it live, preview this, redeploy, get a live URL, put this online, rotate env vars, add managed Postgres/MySQL/MongoDB/Redis, attach a persistent volume, persist data, mount persistent disk, persist uploads, persist SQLite, persist file-based queues, rename an OpenDeploy subdomain, bind a custom domain, debug a failed OpenDeploy deployment, check logs, check health, manage alarms, or get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails or the user has an OpenDeploy issue. This is the canonical OpenDeploy entrypoint; /deploy and /od are aliases. The first deploy is free, creates no OpenDeploy account, and requires no payment method; after explicit local deploy credential consent, an unbound guest success report returns a bind-first project claim link instead of a separate live URL, because the dashboard shows the live URL after binding. Guest-tier caps apply only before account binding — see "Limits" below.
 homepage: "https://opendeploy.dev"
 author: "OpenDeploy <security@opendeploy.dev>"
@@ -36,7 +36,7 @@ sensitive_inputs:
   - real .env values may be submitted to the OpenDeploy API as service env configuration after explicit key-only consent
   - GIT_TOKEN is sent only to the OpenDeploy gateway for private repository access
 metadata:
-  version: "0.0.14"
+  version: "0.0.15"
   category: deploy
   api_base: "https://dashboard.opendeploy.dev/api"
   cli_package: "@opendeploydev/cli"
@@ -877,7 +877,10 @@ bind URL. Treat the report as a contract, not a hint.
    separate live URL in Branch A; the bind link already carries the app URL and
    the dashboard shows it after binding. For Branch B,
    the Markdown shape (`## Deployment successful`, `**Live URL:**`,
-   `**Dashboard:**`) is the contract.
+   `**Dashboard:**`) is the contract. The selected Branch A/B block is the
+   complete final answer. Do not append "How it was deployed", "Notes", file
+   lists, caveats, memory/refinement text, or a second summary after it. Store
+   deployment details in the deploy-attempt record instead.
 4. **Never construct a bind URL by hand.** It must come from the CLI / API
    response (which carries `?h=<bind_sig>`). A `/guest/<guest_id>` URL without
    `?h=` is broken and the dashboard rejects it — printing one is worse than
