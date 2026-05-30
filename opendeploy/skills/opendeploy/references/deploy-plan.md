@@ -385,7 +385,7 @@ create deployment
 wait deployment active
 patch late-bound URL env and create a new deployment if planned/approved
 resolve auto domain
-report live URL and account-binding URL
+report bind-first handoff for unbound guest projects, or live URL plus dashboard URL for bound projects
 ```
 
 If startup-critical env remains unresolved before service creation, resolve it

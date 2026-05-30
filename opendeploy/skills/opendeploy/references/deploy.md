@@ -530,21 +530,22 @@ asking for the next action.
 Print exactly:
 
 ```text
-## Deployment successful — bind required
+## Deployment ready — bind project first
+
+Your app has been deployed under a temporary guest project.
 
 ### Step 1: Bind project (important)
 
-Open the bind link below in your browser and sign in via SSO. If you do not
-bind the project, OpenDeploy will garbage-collect it after **6 hours** and the
-live URL will stop working.
+Open this link to claim the project in OpenDeploy:
 
-**Bind URL:** <BIND_URL>
+[Bind project](<BIND_URL>)
 
-### Step 2: Check live URL
+This keeps the project running after the 6-hour guest window. After binding,
+the OpenDeploy dashboard will show the live URL and deployment details.
 
-After binding, open the live URL:
+### Step 2: Open it from the dashboard
 
-**Live URL:** <APP_URL>
+After binding, use the dashboard project page to open the live app.
 
 **Project:** `<PROJECT_NAME>`
 **Service:** `<SERVICE_NAME>`

@@ -1,6 +1,6 @@
 ---
 name: opendeploy-oncall
-version: "0.0.12"
+version: "0.0.13"
 description: Get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails, OpenDeploy has a platform/upload/CLI issue, or the user asks to contact OpenDeploy support. This is not agent auto-oncall; the agent continues investigating locally, while this skill gets or sets up the Discord link so the user can reach the OpenDeploy team. It also supports alarm-backed posts when a real alarm ID exists.
 
   SKIP: routine deploy/restart/rollback (use opendeploy, opendeploy-ops,

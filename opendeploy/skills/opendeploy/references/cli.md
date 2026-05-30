@@ -143,8 +143,9 @@ label. It is not used by the backend to match or verify auth.
 ## First deploy sequence
 
 Normal first deploy is no-pay and no-account: after local deploy credential
-consent, OpenDeploy deploys and returns a live URL plus an optional account
-binding URL. Do not ask for payment, plan choice, account creation, staging, or
+consent, OpenDeploy deploys and returns a bind-first project claim link for
+unbound guest projects, or a live URL plus dashboard URL for account-bound
+projects. Do not ask for payment, plan choice, account creation, staging, or
 region preference unless the CLI/gateway returns a concrete gate.
 
 Start with the global CLI preflight:
@@ -466,7 +467,9 @@ opendeploy domains check-subdomain "$SUBDOMAIN" --json
 opendeploy domains update-subdomain "$DOMAIN_ID" --subdomain "$SUBDOMAIN" --json
 ```
 
-Only print the account-binding URL after a deployment has an active live URL.
+Only print the account-binding URL after a deployment has an active app URL in
+the report. For unbound guest projects, print the bind-first Branch A handoff
+instead of separately printing the live URL.
 Prefer:
 
 ```bash

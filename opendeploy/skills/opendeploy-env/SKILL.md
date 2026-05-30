@@ -1,6 +1,6 @@
 ---
 name: opendeploy-env
-version: "0.0.12"
+version: "0.0.13"
 description: Scan, upload, patch, unset, rotate, or reconcile OpenDeploy environment variables and secrets. Use when the user says .env upload, env vars, environment variables, config vars, secrets, import env, sync env, env diff, set env, unset env, remove env key, rotate secret, AI Hub key, AI provider key, OpenAI key, Anthropic key, Gemini key, DATABASE_URL, REDIS_URL, MONGODB_URI, or asks to sync env into a service.
 user-invokable: true
 ---
