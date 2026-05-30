@@ -26,22 +26,26 @@ exclude those files before uploading application source.
 When the CLI exposes this surface, or when using the approved OpenDeploy API
 escape hatch, also sync the redacted record to the backend attempt table:
 
-- `POST /v1/deployment-attempts` creates or upserts by `record_id`.
-- `PATCH /v1/deployment-attempts/<attempt-record-uuid>` updates a known row.
-- `GET /v1/projects/<project-id>/deploy-attempts` lists project records.
-- `GET /v1/deployments/<deployment-id>/attempt-records` lists records for a
-  deployment.
+- `opendeploy deployment-attempts upsert ...` / `POST /v1/deployment-attempts`
+  creates or upserts by `record_id`.
+- `opendeploy deployment-attempts patch <attempt-record-uuid> ...` /
+  `PATCH /v1/deployment-attempts/<attempt-record-uuid>` updates a known row.
+- `opendeploy deployment-attempts list --project <project-id>` /
+  `GET /v1/deployment-attempts?project_id=<project-id>` lists project records.
+- `opendeploy deployment-attempts get <attempt-record-uuid>` /
+  `GET /v1/deployment-attempts/<attempt-record-uuid>` reads one record.
 
 Backend sync is never a deploy blocker. If the sync route fails, keep the local
 JSON/JSONL record updated and continue with the deploy. Do not upload secret
 values; the backend record stores env key names, redacted logs, classifications,
-fixes, and final status.
+fixes, agent/model metadata, and final status.
 
 ## When to write
 
 1. After local analysis and before cloud mutation: create a draft attempt record
    with repo structure, framework, language, package manager, planned
-   service/dependency/env shape, and source evidence.
+   service/dependency/env shape, visible agent host/model metadata, and source
+   evidence.
 2. After each deployment reaches terminal `failed`, `cancelled`, or
    `rolled_back`: update the same record with logs, error category, root cause,
    and next action before retrying or asking the user.
@@ -66,8 +70,12 @@ prefer `null`, `[]`, or `"unknown"` over inventing data.
   "updated_at": "2026-05-15T00:00:00Z",
   "agent": {
     "host": "codex|claude|cursor|openclaw|unknown",
-    "skill_version": "0.0.8",
-    "cli_version": "0.1.23"
+    "model_provider": "openai|anthropic|unknown",
+    "model_name": "gpt-5-codex|claude-sonnet-4.5|unknown",
+    "model_type": "reasoning|chat|unknown",
+    "model_source": "cli_flag|env|runtime_env|not_exposed",
+    "skill_version": "0.0.16",
+    "cli_version": "0.1.29"
   },
   "repo": {
     "path": "/absolute/local/path",
@@ -202,6 +210,11 @@ Do not create project-specific categories. Put project-specific detail in
 ## Redaction
 
 - Store env key names, never env values.
+- Store agent model metadata only when visible from explicit CLI flags,
+  OpenDeploy `OPENDEPLOY_AGENT_*` env vars, or runtime-provided model env vars.
+  Do not infer `model_type` from the host, provider, or model name. If the
+  current agent does not expose a precise model type, write
+  `model_type: "unknown"` and `model_source: "not_exposed"`.
 - For AI Hub, store provider names, env key names, evidence paths/snippets, and
   the selected mode only. Never store user provider key values or resolved
   OpenDeploy AI Hub tokens.
@@ -218,6 +231,8 @@ Append a compact, redacted summary line to `.opendeploy/deploy-attempts.jsonl`
 whenever the full JSON record changes materially. Include:
 
 - `record_id`
+- `agent.host`, `agent.model_provider`, `agent.model_name`,
+  `agent.model_type`, and `agent.model_source`
 - `repo.remote` or redacted repo id
 - `detected.framework`, `detected.language`, `detected.package_manager`
 - `plan.services[].type/root/port`
