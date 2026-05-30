@@ -698,6 +698,91 @@ repo evidence such as `/health`, `/healthz`, `/ready`, `/status`, `/srv/status`,
 or framework-specific status handlers over `/` when the root path runs setup,
 auth, redirects, or expensive application code.
 
+## 4.7 Static Nginx cache-policy scan
+
+For static sites or Dockerfile services that serve built files through Nginx,
+scan custom Nginx config before upload. This prevents the common "deployment
+succeeded but the browser still shows the previous build" failure.
+
+### Files to scan
+
+Read these files when present:
+
+```text
+nginx.conf
+**/nginx.conf
+**/default.conf
+**/conf.d/*.conf
+Dockerfile
+Dockerfile.*
+docker-compose.yml
+docker-compose.yaml
+```
+
+Treat the app as a static-Nginx cache risk when all of these are true:
+
+- A Dockerfile or compose service uses Nginx (`FROM nginx`, `image: nginx`, or
+  copies a custom Nginx config).
+- The config has a static asset location for extensions such as `css`, `js`,
+  `json`, `jpg`, `jpeg`, `png`, `svg`, `webp`, `ico`, `pdf`, `woff`, or
+  `woff2`.
+- That location sets positive caching such as `expires 7d`, `expires max`,
+  `Cache-Control: public`, `max-age`, or `immutable`.
+- Source evidence does not prove every cached asset filename is content
+  fingerprinted (for example `app.3f4a9c2b.js`) and the HTML entrypoint is not
+  explicitly `no-store` / `no-cache`.
+
+Do not assume long caching is safe just because the deploy succeeded. If file
+names such as `app.js`, `main.css`, `style.css`, `index.js`, `bundle.js`, or
+`*.pdf` can be reused across builds, browser/CDN caches may keep old content
+for the full TTL.
+
+### Recommended fix
+
+When this risk is present, ask before patching the Nginx config. The
+recommended option should be `Patch Nginx cache policy (Recommended)`.
+
+Use this safe shape for mutable static builds:
+
+```nginx
+location ~* \.html?$ {
+  expires -1;
+  add_header Cache-Control "no-store" always;
+}
+
+location ~* \.(?:css|js|json|pdf)$ {
+  expires -1;
+  add_header Cache-Control "no-cache, must-revalidate" always;
+}
+
+location ~* \.(?:jpg|jpeg|png|gif|svg|webp|ico|woff2?)$ {
+  expires 1h;
+  add_header Cache-Control "public, max-age=3600" always;
+}
+```
+
+If the project clearly emits content-hashed asset names under a dedicated
+assets directory, it is also valid to keep long immutable caching for that
+fingerprinted directory, while keeping HTML no-store/no-cache:
+
+```nginx
+location ~* \.html?$ {
+  expires -1;
+  add_header Cache-Control "no-store" always;
+}
+
+location /assets/ {
+  expires 1y;
+  add_header Cache-Control "public, max-age=31536000, immutable" always;
+}
+```
+
+After patching, re-upload source and create one new deployment. Do not keep
+redeploying the same cached config. For an already-live service, verify with
+`curl -I <live-url>/<asset>` that mutable assets no longer return a long
+`Cache-Control: public` / `max-age` header before reporting the stale-content
+issue fixed.
+
 If Dockerfile or build scripts use broad `COPY . .` / `ADD .`, inspect the
 archive manifest for local agent metadata and workspace state. Exclude
 `.agents/`, `.claude/`, `.codex/`, `.opendeploy/`, `.gstack/`, `.git/`,

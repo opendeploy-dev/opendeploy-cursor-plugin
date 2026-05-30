@@ -1,6 +1,6 @@
 ---
 name: opendeploy-api
-version: "0.0.13"
+version: "0.0.14"
 description: Safe OpenDeploy API escape hatch for advanced agents when the CLI lacks a route. Use only when the user says raw API, OpenDeploy API, CLI lacks route, missing CLI command, advanced API, API escape hatch, GET route, POST route, PUT route, PATCH route, or a needed OpenDeploy operation is not exposed by the CLI. DELETE remains blocked.
 user-invokable: true
 ---
