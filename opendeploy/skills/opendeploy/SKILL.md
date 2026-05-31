@@ -1,6 +1,6 @@
 ---
 name: opendeploy
-version: "0.0.16"
+version: "0.0.17"
 description: One-click OpenDeploy autoplan skill for deploying projects from coding agents through the official versioned npm CLI (@opendeploydev/cli). Use when the user says deploy this, host this, publish this, ship this, launch this, make it live, preview this, redeploy, get a live URL, put this online, rotate env vars, add managed Postgres/MySQL/MongoDB/Redis, attach a persistent volume, persist data, mount persistent disk, persist uploads, persist SQLite, persist file-based queues, rename an OpenDeploy subdomain, bind a custom domain, debug a failed OpenDeploy deployment, check logs, check health, manage alarms, or get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails or the user has an OpenDeploy issue. This is the canonical OpenDeploy entrypoint; /deploy and /od are aliases. The first deploy is free, creates no OpenDeploy account, and requires no payment method; after explicit local deploy credential consent, an unbound guest success report returns a bind-first project claim link instead of a separate live URL, because the dashboard shows the live URL after binding. Guest-tier caps apply only before account binding — see "Limits" below.
 homepage: "https://opendeploy.dev"
 author: "OpenDeploy <security@opendeploy.dev>"
@@ -36,7 +36,7 @@ sensitive_inputs:
   - real .env values may be submitted to the OpenDeploy API as service env configuration after explicit key-only consent
   - GIT_TOKEN is sent only to the OpenDeploy gateway for private repository access
 metadata:
-  version: "0.0.16"
+  version: "0.0.17"
   category: deploy
   api_base: "https://dashboard.opendeploy.dev/api"
   cli_package: "@opendeploydev/cli"
@@ -80,6 +80,7 @@ different platform when the user asks for app-side persistent disk.
 
 - **Execution source:** run OpenDeploy through the versioned npm package `@opendeploydev/cli`. Do not copy API-calling shell snippets from references when the CLI can express the action.
 - **First-deploy promise:** a normal first deploy is no-pay and no-account. Do not tell users to expect paid prompts, plan selection, account signup, or payment-method collection before the first successful deployment. The only OpenDeploy platform approval normally needed on a cold machine is local deploy credential creation; env-upload approval appears only when real secret values cross the wire. Paid/add-on approval appears only after an actual quota/add-on gate or an explicit user request for a paid feature.
+- **No vague cost warnings:** never attach generic billing warnings to the normal first-deploy option. Say it plainly: first deploy runs on the free tier and creates no account, no payment method, and no charge. If the backend later returns a concrete quota/add-on/paid gate, stop and ask that separate upgrade question with the exact resource.
 - **Identity:** package, skill, repository, license, and security contact are declared in `skill.json`. Verify package metadata when the user or environment is cautious.
 - **Credential creation:** never create a local deploy credential until the user explicitly approves it. Reuse an existing `OPENDEPLOY_TOKEN` or `~/.opendeploy/auth.json` without re-prompting.
 - **Credential wording:** say "local deploy credential" for existing `od_a*` auth. Do not tell the user "guest credential present" unless you have just created it or have confirmed `is_bound == false` / `state == unbound`. A bound `od_a*` token still has `guest_id` and `bind_sig`, so auth-file shape is not proof that the account is unbound.
@@ -932,7 +933,7 @@ header:   "Deploy consent"
 multiSelect: false
 options:
   - label: "Create credential and deploy"
-    description: "Free first deploy: creates a local od_a* deploy credential, uploads safe source, creates resources, deploys, and returns a bind-first project claim link. No account or payment method is created."
+    description: "Free first deploy on OpenDeploy's free tier: creates a local od_a* deploy credential, uploads safe source, creates resources, deploys, and returns a bind-first project claim link. No account, payment method, or charge is created."
   - label: "I already have a token"
     description: "Wait for an existing od_k* OpenDeploy token, then deploy with account-bound auth."
   - label: "Cancel"

@@ -1,6 +1,6 @@
 ---
 name: opendeploy-setup
-version: "0.0.15"
+version: "0.0.17"
 description: Install, update, verify, or repair the OpenDeploy CLI and local agent setup. Use when the user says install OpenDeploy, set up OpenDeploy, setup OpenDeploy, update OpenDeploy, upgrade OpenDeploy, check version, latest version, stale CLI, stale plugin, update CLI, update plugin, verify CLI, run doctor, prepare this agent, or fix OpenDeploy installation. This skill does not create projects unless the original user request also asks to deploy.
 user-invokable: true
 ---
@@ -236,6 +236,35 @@ description.
 If global `opendeploy` is missing, ask to install
 `@opendeploydev/cli@latest`. If the user declines, stop before deploy or other
 cloud mutation.
+
+## After Install Deployment Prompt
+
+If the original user request says "install OpenDeploy, then ask whether to
+deploy this project", keep that follow-up simple and free-tier accurate. A
+normal first deploy on OpenDeploy is free: it does not create an OpenDeploy
+account, does not ask for a payment method, and does not charge the user. Paid
+actions are separate gates only for explicit paid features, AI Hub credit
+top-ups/auto-recharge, or a concrete quota/add-on response from the platform.
+
+Never attach generic billing warnings to the normal first-deploy path. That
+scares users away from the free tier and misstates the product. If the project
+later hits a quota or add-on gate, stop there and ask a separate upgrade
+question with the exact resource from the backend response.
+
+Recommended structured follow-up after setup:
+
+```text
+question: "OpenDeploy is installed and enabled. Deploy the current project now?"
+header:   "Deploy?"
+multiSelect: false
+options:
+  - label: "Preview plan first (Recommended)"
+    description: "Read the project and show the deployment plan before any cloud changes. No account, payment method, or paid resource is created."
+  - label: "Deploy now"
+    description: "Run the free first deploy on OpenDeploy's free tier. No account, payment method, or charge is created; if a real quota/add-on gate appears, I will stop and ask separately."
+  - label: "Not now"
+    description: "Keep OpenDeploy installed and make no deployment changes."
+```
 
 ## Verification
 

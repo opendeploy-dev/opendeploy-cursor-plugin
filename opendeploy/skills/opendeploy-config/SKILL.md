@@ -1,6 +1,6 @@
 ---
 name: opendeploy-config
-version: "0.0.15"
+version: "0.0.17"
 description: Inspect or patch OpenDeploy service config such as build command, start command, root directory, Dockerfile path, builder, port, resources, healthcheck, and monorepo settings. Use when the user says build command, start command, root directory, app directory, Dockerfile, builder, auto-builder, health check, resources, memory, CPU, port config, monorepo config, or auto-detection picked the wrong build/start/root/port.
 user-invokable: true
 ---
