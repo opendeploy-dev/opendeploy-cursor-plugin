@@ -277,12 +277,14 @@ Successful first deploy should end with:
 ```json
 {
   "status": "active",
-  "live_url": "https://example.opendeploy.run",
-  "account_binding_url": "https://dashboard.opendeploy.dev/guest/...",
+  "bind_url": "https://dashboard.opendeploy.dev/guest/...",
   "project_id": "uuid",
   "service_id": "uuid",
   "deployment_id": "uuid"
 }
 ```
 
-Only print `account_binding_url` after `live_url` is active.
+For unbound guest deploys, print only the signed bind URL in the user-facing
+final answer. Do not print `live_url`, app URL, health URL, or IDs. Keep
+`live_url` internal for smoke tests, late-bound env patches, and bind-link
+construction. Account-bound deploys may print the live URL plus dashboard URL.

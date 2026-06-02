@@ -4,9 +4,10 @@ Match the symptom, run the inspection, apply the action. Do not retry silently -
 
 | symptom | inspect | action |
 |---|---|---|
-| **401** on any call | inspect `~/.opendeploy/auth.json` kind byte (`od_k*` dashboard token vs `od_a*` local deploy credential) | Token rejected. **Do not auto-delete `auth.json`.** Surface the [`401 token-rejected AskUserQuestion`](#401-prompt) defined below — never silently exit, never silently replace the credential. |
+| **401** on any call | first check `opendeploy auth guest-status --json` / `binding_state`; then inspect `~/.opendeploy/auth.json` kind byte (`od_k*` dashboard token vs `od_a*` local deploy credential) | If binding state is `pending`/`unbound`, use the bind-only row below instead. Otherwise the token was rejected. **Do not auto-delete `auth.json`.** Surface the [`401 token-rejected AskUserQuestion`](#401-prompt) defined below — never silently exit, never silently replace the credential. |
 | **401 on `/v1/profile` only** | token starts with `od_a` and `auth.json.guest_id` exists | This can be normal for a local deploy credential that has not been linked to an account. Do not use `/profile` as preflight. Use `GET /v1/regions/` for auth sanity and region discovery. |
-| **403 `bind_required`** on `/v1/billing/*` or custom-domain routes | `auth.json.guest_id` non-empty AND no dashboard token | The current credential has not been linked to an account. Surface the account-binding URL (`https://<dashboard_host>/guest/<guest_id>?h=<bind_sig>` — `<dashboard_host>` is `OPENDEPLOY_BASE_URL` minus `/api`) and tell the user: sign in via the link, then retry. The skill cannot bind on the user's behalf. |
+| **403 `bind_required`** on `/v1/billing/*`, custom-domain routes, or account-bound-only service operations | `auth.json.guest_id` non-empty AND no dashboard token | The current credential has not been linked to an account. Surface only the signed account-binding URL and tell the user to bind, then retry. Do not print the live app URL, health URL, project IDs, or service IDs in this response. Use the fixed bind-only block below. The skill cannot bind on the user's behalf. |
+| **401/403 while `binding_state: pending` or auth state is `unbound`** | `opendeploy auth guest-status --json`, `opendeploy deploy report <id> --json`, or saved auth file with valid `guest_id` + `bind_sig` | Binding is still required. Do not keep retrying the operation and do not surface the live URL even if `/health` returns 200. Print the fixed bind-only block below with the signed bind URL, then stop until the user confirms binding is complete. |
 | **403 `guest_quota_exceeded`** on service create | response body `{field, requested, limit}` | Service spec exceeds the current plan/resource ceiling. Name the field and values before asking. Ask with a structured question and make `Upgrade plan (Recommended)` first. If the user chooses upgrade, return `https://dashboard.opendeploy.dev/settings` exactly and stop mutation until they come back. If they choose to adjust resources, re-issue within the returned CPU/memory/replica limit. |
 | **403 `quota_exceeded` on volume add** | response body includes `exceeded_resources` and may include `available_addons` | Persistent-volume storage quota is not available for the intended size/account. The backend has already included storage add-ons in the limit; if it still returns 403, treat it as a real storage quota block. Report current/requested/limit and matching storage add-on quantity/price when present. Do not probe smaller sizes by default. Ask with `Upgrade plan (Recommended)` first and return `https://dashboard.opendeploy.dev/settings` if chosen. Retry with a smaller volume only when the user explicitly chooses resource adjustment. |
 | **409 on `POST /v1/projects`** for a local credential not linked to an account | response includes `project_id` of the existing project | One local credential without account binding -> one live project at a time. Either (a) reuse the returned `project_id` and proceed with Step 4 onward, or (b) wait for the 6h GC and retry. Don't loop. |
@@ -118,6 +119,24 @@ created by `references/deploy-attempt-record.md`; write `n/a` only when the
 skill could not create one.
 
 Do **not** print the contact block on transient retryable errors (a single 5xx that resolves on retry, a 429 with `Retry-After`, an in-progress `building` state). Print it only when the skill has stopped trying.
+
+## Fixed bind-only block
+
+Use this exact shape for `bind_required`, `binding_state: pending`, auth
+`state: unbound`, or any account-bound-only operation attempted before the
+local deploy credential has been linked to an account:
+
+```text
+## Bind project first
+
+## Required action: [Bind project now](<BIND_URL>)
+
+After binding, tell me and I will retry the requested operation.
+```
+
+Stop here. Do not print the live app URL, health URL, project/service/deployment
+IDs, or troubleshooting details in the same response. The bind link must be
+visually dominant and must be the only user-facing URL.
 
 ## Where to look for logs
 

@@ -145,7 +145,9 @@ label. It is not used by the backend to match or verify auth.
 Normal first deploy is no-pay and no-account: after local deploy credential
 consent, OpenDeploy deploys and returns a bind-first project claim link for
 unbound guest projects, or a live URL plus dashboard URL for account-bound
-projects. Do not ask for payment, plan choice, account creation, staging, or
+projects. For unbound guest projects, the final user-facing answer prints only
+the bind link — not the live URL — because the dashboard shows the live app after
+binding. Do not ask for payment, plan choice, account creation, staging, or
 region preference unless the CLI/gateway returns a concrete gate.
 
 Start with the global CLI preflight:

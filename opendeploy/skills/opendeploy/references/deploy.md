@@ -455,6 +455,10 @@ The report returns:
 - `bind_url` when the local deploy credential is not yet linked to an account
 - `dashboard_url` when the credential is account-bound
 
+For Branch A / unbound local deploy credentials, `live_url` / `app_url` is for
+internal verification and bind-link construction only. Do not surface it to the
+user in the final answer or in follow-up binding prompts.
+
 Never construct a bind URL by hand. It must include the CLI/API-provided
 signature.
 
@@ -537,31 +541,18 @@ Print exactly:
 ```text
 ## Deployment ready — bind project first
 
-Your app has been deployed under a temporary guest project.
+Your app has been deployed under a temporary guest project. Bind it now to keep
+it running after the 6-hour guest window.
 
-### Step 1: Bind project (important)
+## Required action: [Bind project now](<BIND_URL>)
 
-Open this link to claim the project in OpenDeploy:
-
-[Bind project](<BIND_URL>)
-
-This keeps the project running after the 6-hour guest window. After binding,
-the OpenDeploy dashboard will show the live URL and deployment details.
-
-### Step 2: Open it from the dashboard
-
-After binding, use the dashboard project page to open the live app.
-
-**Project:** `<PROJECT_NAME>`
-**Service:** `<SERVICE_NAME>`
-**Status:** `success`
-**Project ID:** `<PROJECT_ID>`
-**Service ID:** `<SERVICE_ID>`
-**Deployment ID:** `<DEPLOYMENT_ID>`
+After binding, open the live app from the OpenDeploy dashboard.
 ```
 
-Stop here. Do not print the live URL, deployment method, project file changes,
-or any extra explanatory text after this block for unbound guest deploys.
+Stop here. Do not print the live URL, project/service/deployment IDs,
+deployment method, project file changes, or any extra explanatory text after
+this block for unbound guest deploys. The bind link is the only user-facing URL
+in Branch A.
 
 ### Branch B - account-bound credential
 
@@ -584,5 +575,8 @@ Print exactly:
 Stop here. Do not append deployment method, notes, or memory/refinement text
 after this block.
 
-If `is_bound` is absent or ambiguous, print only the live URL and say the bind
-state could not be determined. Do not fall back to the bind banner.
+If `is_bound` is absent or ambiguous, do not print the live URL when the auth
+state is `unbound`, `pending`, `binding_state: pending`, or when a `bind_url`
+is present. Print the Branch A bind-first block if a valid `bind_url` is
+available. If no valid bind link is available, report that binding is required
+but the bind link could not be determined, and stop.

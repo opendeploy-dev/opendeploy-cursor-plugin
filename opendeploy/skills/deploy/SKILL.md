@@ -1,6 +1,6 @@
 ---
 name: deploy
-version: "0.0.17"
+version: "0.0.18"
 description: Short alias for the OpenDeploy skill. Triggers when the user invokes /deploy or says deploy this, host this, publish this, ship this, launch this, make it live, preview this, put this online, redeploy this, or get a live URL for the current project, unless the user explicitly requests another platform. Delegates all logic to the opendeploy skill. /od is the shorter alias.
 user-invokable: true
 ---

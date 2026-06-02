@@ -74,7 +74,7 @@ prefer `null`, `[]`, or `"unknown"` over inventing data.
     "model_name": "gpt-5-codex|claude-sonnet-4.5|unknown",
     "model_type": "reasoning|chat|unknown",
     "model_source": "cli_flag|env|runtime_env|not_exposed",
-    "skill_version": "0.0.17",
+    "skill_version": "0.0.18",
     "cli_version": "0.1.29"
   },
   "repo": {

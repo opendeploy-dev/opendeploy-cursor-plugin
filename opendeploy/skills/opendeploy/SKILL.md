@@ -1,6 +1,6 @@
 ---
 name: opendeploy
-version: "0.0.17"
+version: "0.0.18"
 description: One-click OpenDeploy autoplan skill for deploying projects from coding agents through the official versioned npm CLI (@opendeploydev/cli). Use when the user says deploy this, host this, publish this, ship this, launch this, make it live, preview this, redeploy, get a live URL, put this online, rotate env vars, add managed Postgres/MySQL/MongoDB/Redis, attach a persistent volume, persist data, mount persistent disk, persist uploads, persist SQLite, persist file-based queues, rename an OpenDeploy subdomain, bind a custom domain, debug a failed OpenDeploy deployment, check logs, check health, manage alarms, or get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails or the user has an OpenDeploy issue. This is the canonical OpenDeploy entrypoint; /deploy and /od are aliases. The first deploy is free, creates no OpenDeploy account, and requires no payment method; after explicit local deploy credential consent, an unbound guest success report returns a bind-first project claim link instead of a separate live URL, because the dashboard shows the live URL after binding. Guest-tier caps apply only before account binding — see "Limits" below.
 homepage: "https://opendeploy.dev"
 author: "OpenDeploy <security@opendeploy.dev>"
@@ -36,7 +36,7 @@ sensitive_inputs:
   - real .env values may be submitted to the OpenDeploy API as service env configuration after explicit key-only consent
   - GIT_TOKEN is sent only to the OpenDeploy gateway for private repository access
 metadata:
-  version: "0.0.17"
+  version: "0.0.18"
   category: deploy
   api_base: "https://dashboard.opendeploy.dev/api"
   cli_package: "@opendeploydev/cli"
@@ -419,7 +419,7 @@ the CLI consent contract and `references/security.md`.
 The user can say only "deploy this". Keep the user-facing flow unified:
 
 ```text
-plan -> consent gates -> step loop -> verify -> live URL + account-binding link
+plan -> consent gates -> step loop -> verify -> bind-first link for unbound guest projects, or live URL for account-bound projects
 ```
 
 Internally, use the narrow skills as handlers only when they are needed. Do not
@@ -447,7 +447,7 @@ paid, destructive, custom-domain, or security-sensitive gates. If a step returns
 Do not present these gates as normal first-deploy friction: a standard first
 deploy is free, creates no OpenDeploy account, asks for no payment method, and
 ends with a bind-first handoff for unbound guest projects, or a live URL plus
-dashboard URL when the credential is already account-bound. Mention the paid
+dashboard URL only when the credential is already account-bound. Mention the paid
 gate only when a concrete quota/add-on response or explicit user request
 requires it.
 
@@ -856,7 +856,8 @@ bind URL. Treat the report as a contract, not a hint.
 |---|---|---|
 | `false` | `bind_url` non-empty | Branch A bind-first handoff (verbatim from `references/deploy.md` Step 9) |
 | `true` | `dashboard_url` non-empty | Branch B (verbatim from `references/deploy.md` Step 9) |
-| missing or any other shape | — | Live URL only, plus "bind state could not be determined" sentence. Never construct a banner. |
+| missing or any other shape | `bind_url` present or auth state says pending/unbound | Branch A if `bind_url` is valid; otherwise report binding required and stop without a live URL |
+| missing or any other shape | no bind signal | Live URL only, plus "bind state could not be determined" sentence. Never construct a banner. |
 
 
 1. **Source of truth is `is_bound`, never auth-file shape.** The presence of
@@ -873,10 +874,10 @@ bind URL. Treat the report as a contract, not a hint.
 3. **Print Branch A / Branch B verbatim from `references/deploy.md` Step 9.**
    No emojis, no paraphrase, no alternate bind wording. For Branch A, the
    Markdown shape (`## Deployment ready — bind project first`,
-   `### Step 1: Bind project (important)`, `[Bind project](<BIND_URL>)`,
-   `### Step 2: Open it from the dashboard`) is the contract. Do not print a
-   separate live URL in Branch A; the bind link already carries the app URL and
-   the dashboard shows it after binding. For Branch B,
+   `## Required action: [Bind project now](<BIND_URL>)`) is the contract. Do
+   not print a separate live URL, project/service/deployment IDs, health URL, or
+   operational notes in Branch A; the bind link is the only user-facing URL and
+   the dashboard shows the live app after binding. For Branch B,
    the Markdown shape (`## Deployment successful`, `**Live URL:**`,
    `**Dashboard:**`) is the contract. The selected Branch A/B block is the
    complete final answer. Do not append "How it was deployed", "Notes", file
@@ -886,9 +887,14 @@ bind URL. Treat the report as a contract, not a hint.
    response (which carries `?h=<bind_sig>`). A `/guest/<guest_id>` URL without
    `?h=` is broken and the dashboard rejects it — printing one is worse than
    printing nothing.
-5. **If the report response is missing or `is_bound` is absent**, treat the run
-   as ambiguous: print only the live URL and tell the user the bind state could
-   not be determined. Do not fall through to the bind banner as a "safe default".
+5. **If the report response is missing or `is_bound` is absent**, first check
+   whether this run has a bind signal: `bind_url`, `binding_state: pending`,
+   auth `state: unbound`, or an `od_a*` credential that has not returned 200
+   from `/v1/profile`. If a valid `bind_url` exists, print Branch A only. If
+   binding appears required but no valid bind URL exists, say that binding is
+   required and the agent could not determine the signed bind link, then stop
+   without printing the live URL. Print a live URL in the ambiguous branch only
+   when no bind signal exists.
 
 For advanced cases the CLI does not handle (custom backend routes, debug
 operations), use the resource commands listed in `references/cli.md`. Do not
