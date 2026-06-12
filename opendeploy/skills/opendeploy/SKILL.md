@@ -1,6 +1,6 @@
 ---
 name: opendeploy
-version: "0.0.18"
+version: "0.0.19"
 description: One-click OpenDeploy autoplan skill for deploying projects from coding agents through the official versioned npm CLI (@opendeploydev/cli). Use when the user says deploy this, host this, publish this, ship this, launch this, make it live, preview this, redeploy, get a live URL, put this online, rotate env vars, add managed Postgres/MySQL/MongoDB/Redis, attach a persistent volume, persist data, mount persistent disk, persist uploads, persist SQLite, persist file-based queues, rename an OpenDeploy subdomain, bind a custom domain, debug a failed OpenDeploy deployment, check logs, check health, manage alarms, or get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails or the user has an OpenDeploy issue. This is the canonical OpenDeploy entrypoint; /deploy and /od are aliases. The first deploy is free, creates no OpenDeploy account, and requires no payment method; after explicit local deploy credential consent, an unbound guest success report returns a bind-first project claim link instead of a separate live URL, because the dashboard shows the live URL after binding. Guest-tier caps apply only before account binding — see "Limits" below.
 homepage: "https://opendeploy.dev"
 author: "OpenDeploy <security@opendeploy.dev>"
@@ -36,7 +36,7 @@ sensitive_inputs:
   - real .env values may be submitted to the OpenDeploy API as service env configuration after explicit key-only consent
   - GIT_TOKEN is sent only to the OpenDeploy gateway for private repository access
 metadata:
-  version: "0.0.18"
+  version: "0.0.19"
   category: deploy
   api_base: "https://dashboard.opendeploy.dev/api"
   cli_package: "@opendeploydev/cli"
@@ -513,6 +513,12 @@ Recommendation order (first option in the rendered question):
 - App writes durable data to a local filesystem path (`uploads/`, `media/`,
   `/data`, `/var/lib/*`, backups, SQLite, file queues, repo storage, on-disk
   caches) → `Attach OpenDeploy volume`.
+- If the user or repo calls the deploy a demo/template/reference app but the
+  running app accepts new uploads, generated media, restaurant/menu images, PDFs,
+  backups, SQLite data, or any other user-created local files, keep
+  `Attach OpenDeploy volume` as the recommended option. Do not label ephemeral
+  storage "Recommended for demo" for those apps. Ephemeral is a non-recommended
+  throwaway option only after explicit data-loss acceptance.
 - App is already configured for external object storage and only needs missing
   S3/R2/Spaces env → `Configure storage first`.
 - Otherwise → ask via `Review details` before recommending a path.
@@ -1021,7 +1027,7 @@ These rules exist to reduce failed builds and redeploy loops:
   present. Apply the same pattern to `vite.config.*`, `nuxt.config.*`,
   `svelte.config.*`, `astro.config.*`, and `remix.config.*`.
 - When Dockerfile or compose exposes multiple ports, select the HTTP listener for OpenDeploy ingress. Treat SSH, SMTP, database, metrics-only, or raw TCP ports as unsupported secondary ports unless the platform explicitly exposes them. Do not call such deploys "full" unless those secondary protocols are supported.
-- If Dockerfile `VOLUME`, compose `volumes:`, docs, or env keys show durable data under paths such as `/data`, `/var/lib/*`, `storage/`, `uploads/`, `media/`, or `backups/`, pause before mutation and ask for an OpenDeploy storage strategy: attach an OpenDeploy volume, configure the app's object-storage/media env, continue with ephemeral local files after explicit data-loss acknowledgement, or review details. Prefer "Attach OpenDeploy volume" for local uploads, backups, SQLite, file-based queues, repo storage, or apps whose docs describe a local disk path. Prefer "Configure storage first" only when the app is already designed for external object storage and just needs S3/R2/Spaces env. Never auto-attach a volume. For new services include `volumes` inline in `service.json` on `services create` (no downtime, no conversion); for existing services route to `opendeploy-volume` (first volume triggers a destructive Deployment→StatefulSet conversion with ~30s downtime). Do not call this a preview, and do not suggest another platform unless the user asks.
+- If Dockerfile `VOLUME`, compose `volumes:`, docs, or env keys show durable data under paths such as `/data`, `/var/lib/*`, `storage/`, `uploads/`, `media/`, or `backups/`, pause before mutation and ask for an OpenDeploy storage strategy: attach an OpenDeploy volume, configure the app's object-storage/media env, continue with ephemeral local files after explicit data-loss acknowledgement, or review details. Prefer "Attach OpenDeploy volume" for local uploads, backups, SQLite, file-based queues, repo storage, or apps whose docs describe a local disk path. Do not downgrade the recommendation to ephemeral just because the user says "demo", "template", or "reference app" when the app accepts new uploads/media or writes user-created files. Prefer "Configure storage first" only when the app is already designed for external object storage and just needs S3/R2/Spaces env. Never auto-attach a volume. For new services include `volumes` inline in `service.json` on `services create` (no downtime, no conversion); for existing services route to `opendeploy-volume` (first volume triggers a destructive Deployment→StatefulSet conversion with ~30s downtime). Do not call this a preview, and do not suggest another platform unless the user asks.
 - If the user chooses object storage, collect the storage env source before
   creating cloud resources. Use structured secret input when available, or ask
   for a local 0600 env/body file path. The agent should run the OpenDeploy env

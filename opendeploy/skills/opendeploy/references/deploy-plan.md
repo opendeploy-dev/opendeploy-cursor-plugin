@@ -322,8 +322,11 @@ decision before mutation. Available options on the OpenDeploy path:
   (node-local, single-attach RWO) and mount it at the app's durable path.
   Recommended when the app writes local uploads, backups, media, SQLite files,
   file queues, on-disk repo storage, indexes, or other durable data to a fixed
-  filesystem path. Never auto-attach: surface this option and let the user pick
-  it. Routing depends on whether the service exists yet:
+  filesystem path. This stays the recommended option for demos/templates too
+  when users can create new uploads/media or other local files; do not label
+  ephemeral storage "Recommended for demo" in that case. Never auto-attach:
+  surface this option and let the user pick it. Routing depends on whether the
+  service exists yet:
   - **New service (during first deploy):** include the `volumes` array
     inline in `service.json` on the `services create` step (see
     `references/api-schemas.md` Step 3.3 `volumes` sub-schema). The service
@@ -345,7 +348,8 @@ decision before mutation. Available options on the OpenDeploy path:
   snippets with storage credentials.
 - **Continue with ephemeral local files** — deploy now without persistence;
   file-backed paths are lost on restart/redeploy/reschedule. Allowed only
-  after the user explicitly accepts data loss for those paths.
+  after the user explicitly accepts data loss for those paths. This option is
+  never the recommended default for apps with uploads/media/user-created files.
 - **Pause before mutation** or engage OpenDeploy support through the user's
   private Discord channel (`opendeploy-oncall`).
 

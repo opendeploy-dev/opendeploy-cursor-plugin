@@ -1,7 +1,7 @@
 {
   "name": "opendeploy",
   "displayName": "OpenDeploy",
-  "version": "0.0.18",
+  "version": "0.0.19",
   "description": "OpenDeploy skills for Cursor: one-click deploy autoplan plus CLI-first skills for auth, env, AI Hub, database, monorepo, domain, debug, ops, alarms, oncall, volume, and config.",
   "author": {
     "name": "OpenDeploy",

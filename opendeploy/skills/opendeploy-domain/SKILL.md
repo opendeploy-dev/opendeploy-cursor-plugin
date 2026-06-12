@@ -1,6 +1,6 @@
 ---
 name: opendeploy-domain
-version: "0.0.18"
+version: "0.0.19"
 description: Manage OpenDeploy auto subdomains, custom domains, DNS checks, CNAME setup, and domain verification. Use when the user says domain, custom domain, hostname, custom hostname, subdomain, rename subdomain, URL, DNS, CNAME, SSL, TLS, primary domain, verify domain, bind domain, check DNS, or make a custom hostname live.
 user-invokable: true
 ---

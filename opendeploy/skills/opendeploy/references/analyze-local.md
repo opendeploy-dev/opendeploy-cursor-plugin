@@ -623,7 +623,10 @@ strategy. Available options:
 - Configure the app's supported object-storage/media env when the app is
   already designed for external object storage and only needs S3/R2/Spaces env.
 - Continue with ephemeral local files only after the user explicitly accepts
-  data loss for those paths on restart/redeploy/reschedule.
+  data loss for those paths on restart/redeploy/reschedule. Do not recommend
+  ephemeral just because the user says "demo" or "template" when the app accepts
+  new uploads/media or writes user-created local files; recommend the OpenDeploy
+  volume path first.
 - Review details, or pause before mutation.
 
 If the user chooses external object storage, collect the secret source before

@@ -304,7 +304,9 @@ media, repo/data directories), ask before creating resources. The OpenDeploy
 path is a production deploy plan with an explicit storage decision: configure
 the app's object-storage/media env first, attach a per-service persistent
 volume, or continue with ephemeral local files after explicit data-loss
-acknowledgement. Never auto-attach a volume. For a new service in this deploy,
+acknowledgement. Recommend the volume path for uploads/media/user-created files
+even for demos/templates; ephemeral is only a throwaway choice after explicit
+data-loss acceptance. Never auto-attach a volume. For a new service in this deploy,
 include `volumes` inline in `service.json` on `services create` (StatefulSet
 from the start, no downtime). For an existing service, route to
 `opendeploy-volume` (first volume triggers a destructive
