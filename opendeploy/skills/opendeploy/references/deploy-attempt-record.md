@@ -17,6 +17,12 @@ attempt or retry so later tools can aggregate failures across repos.
 
 Create `.opendeploy/attempts/` if needed. Keep files mode `0600` when they may
 include log excerpts. Never put secret values in either file.
+Do not add a blanket `.opendeploy/` rule to `.gitignore`: `.opendeploy/project.json`
+is safe shared team context and should be commit-friendly. If the repo needs
+ignore rules, add granular entries for local debug/secrets only, for example
+`.opendeploy/attempts/`, `.opendeploy/deploy-attempts.jsonl`,
+`.opendeploy/*credentials*.json`, `.opendeploy/*secret*.json`,
+`.opendeploy/*env*.json`, and `.opendeploy/support-evidence.md`.
 Before source upload, confirm the archive manifest does not include
 `.opendeploy/attempts/` or `.opendeploy/deploy-attempts.jsonl`; if it does,
 exclude those files before uploading application source.
@@ -74,7 +80,7 @@ prefer `null`, `[]`, or `"unknown"` over inventing data.
     "model_name": "gpt-5-codex|claude-sonnet-4.5|unknown",
     "model_type": "reasoning|chat|unknown",
     "model_source": "cli_flag|env|runtime_env|not_exposed",
-    "skill_version": "0.0.19",
+    "skill_version": "0.0.20",
     "cli_version": "0.1.29"
   },
   "repo": {

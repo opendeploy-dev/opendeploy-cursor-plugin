@@ -63,11 +63,15 @@ Do not place build-needed Dockerfiles under `.opendeploy/`, `.claude/`,
   `requires-python`, and `composer.json` PHP constraints. Do not use a base tag
   that is clearly older than the app requires.
 - Keep `.dockerignore` conservative: exclude `.git`, local dependency folders,
-  local agent metadata (`.agents/`, `.claude/`, `.codex/`, `.opendeploy/`,
-  `.gstack/`), build outputs, test caches, and secret files; include
-  project-owned source directories even when they are named `build`, `scripts`,
-  or `.npmrc` if the Dockerfile references them and they contain no
-  credentials.
+  local agent metadata (`.agents/`, `.claude/`, `.codex/`, `.gstack/`),
+  non-source OpenDeploy local state (`.opendeploy/attempts/`,
+  `.opendeploy/deploy-attempts.jsonl`, generated
+  `.opendeploy/*credentials*.json` / `*secret*.json` / `*env*.json` files),
+  build outputs, test caches, and secret files; include project-owned source
+  directories even when they are named `build`, `scripts`, or `.npmrc` if the
+  Dockerfile references them and they contain no credentials. This is
+  `.dockerignore` guidance only. Do not add a blanket `.opendeploy/` entry to
+  `.gitignore`; `.opendeploy/project.json` is shared team deployment context.
 - After writing files, run local syntax checks when cheap (`dockerfile` parse is
   enough if Docker is unavailable), then re-run `opendeploy deploy plan . --json`
   and verify it selects Dockerfile mode.

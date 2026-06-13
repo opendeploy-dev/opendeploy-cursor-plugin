@@ -788,9 +788,13 @@ issue fixed.
 
 If Dockerfile or build scripts use broad `COPY . .` / `ADD .`, inspect the
 archive manifest for local agent metadata and workspace state. Exclude
-`.agents/`, `.claude/`, `.codex/`, `.opendeploy/`, `.gstack/`, `.git/`,
-dependency caches, and build outputs before upload unless a project-owned source
-file in one of those paths is explicitly required.
+`.agents/`, `.claude/`, `.codex/`, `.gstack/`, `.git/`, dependency caches, build
+outputs, and sensitive/debug OpenDeploy subpaths such as `.opendeploy/attempts/`,
+`.opendeploy/deploy-attempts.jsonl`, generated `.opendeploy/*credentials*.json`
+/ `*secret*.json` / `*env*.json` files before upload unless a project-owned
+source file in one of those paths is explicitly required. Do not add a blanket
+`.opendeploy/` entry to `.gitignore`; `.opendeploy/project.json` is safe shared
+team deployment context.
 
 ## 4.6 Regional package-mirror scan (cross-language)
 
@@ -1065,7 +1069,8 @@ mkdir -p "$(dirname "$SRC_ZIP")"
   zip -qr "$SRC_ZIP" . \
     -x '*.git/*' 'node_modules/*' 'dist/*' \
        'target/*' '.venv/*' '__pycache__/*' '*.pyc' \
-       '.opendeploy/*' \
+       '.opendeploy/attempts/*' '.opendeploy/deploy-attempts.jsonl' \
+       '.opendeploy/*credentials*.json' '.opendeploy/*secret*.json' '.opendeploy/*env*.json' \
        '.env' '.env.*' '.pypirc' '.netrc' \
        '*.pem' '*.key' 'id_rsa' 'id_rsa.pub' 'id_ed25519' 'id_ed25519.pub' \
        'credentials.json' 'service-account*.json' '*kubeconfig*')

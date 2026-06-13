@@ -1,6 +1,6 @@
 ---
 name: opendeploy
-version: "0.0.19"
+version: "0.0.20"
 description: One-click OpenDeploy autoplan skill for deploying projects from coding agents through the official versioned npm CLI (@opendeploydev/cli). Use when the user says deploy this, host this, publish this, ship this, launch this, make it live, preview this, redeploy, get a live URL, put this online, rotate env vars, add managed Postgres/MySQL/MongoDB/Redis, attach a persistent volume, persist data, mount persistent disk, persist uploads, persist SQLite, persist file-based queues, rename an OpenDeploy subdomain, bind a custom domain, debug a failed OpenDeploy deployment, check logs, check health, manage alarms, or get help from OpenDeploy staff through the user's private Discord support channel when a deploy fails or the user has an OpenDeploy issue. This is the canonical OpenDeploy entrypoint; /deploy and /od are aliases. The first deploy is free, creates no OpenDeploy account, and requires no payment method; after explicit local deploy credential consent, an unbound guest success report returns a bind-first project claim link instead of a separate live URL, because the dashboard shows the live URL after binding. Guest-tier caps apply only before account binding — see "Limits" below.
 homepage: "https://opendeploy.dev"
 author: "OpenDeploy <security@opendeploy.dev>"
@@ -36,7 +36,7 @@ sensitive_inputs:
   - real .env values may be submitted to the OpenDeploy API as service env configuration after explicit key-only consent
   - GIT_TOKEN is sent only to the OpenDeploy gateway for private repository access
 metadata:
-  version: "0.0.19"
+  version: "0.0.20"
   category: deploy
   api_base: "https://dashboard.opendeploy.dev/api"
   cli_package: "@opendeploydev/cli"
@@ -476,7 +476,10 @@ has already approved the deploy and env upload (or the host is running in an
 all-approved/bypass permission mode), generate strong values locally, write
 them to a mode-0600 file under `.opendeploy/`, set them as runtime env, and
 continue. Tell the user which keys were generated and where the local credential
-file is, but do not print the values. If the user must choose a human-facing
+file is, but do not print the values. Generated secret/env body files under
+`.opendeploy/` are local-only and should be ignored granularly; do not add a
+blanket `.opendeploy/` rule to `.gitignore` because `.opendeploy/project.json`
+is safe shared team deployment context. If the user must choose a human-facing
 login value and deploy consent has not already covered generated env, use
 `AskUserQuestion` with `Generate secure credentials` as the recommended option,
 `I have credentials`, and `Pause before deploy`.
@@ -1074,9 +1077,14 @@ These rules exist to reduce failed builds and redeploy loops:
   dependencies, not source-build services.
 - Detect existing Dockerfiles, including nested paths such as `docker/Dockerfile`. Use an existing source-root `Dockerfile` when present. If no Dockerfile exists, use OpenDeploy autodetect/config fixes first when they produce a runnable service. If they do not (`no_service_detected`, `no_package_or_dockerfile`, or clear unsupported runtime), make "Add deployment files" the recommended OpenDeploy continuation, ask for structured source-edit approval only when file-edit permission is not already granted, list the exact files, then follow `references/dockerfile-authoring.md`. If a usable Dockerfile is nested, ask before changing source root or copying/renaming it.
 - When a Dockerfile uses `COPY . .` or broad `ADD .`, make sure the uploaded
-  context excludes local agent metadata and private workspace state such as
-  `.agents/`, `.claude/`, `.codex/`, `.opendeploy/`, `.gstack/`, `.git/`, and
-  dependency/build caches. If the archive manifest includes those paths, patch
+  context excludes local agent metadata and non-source deployment/debug state
+  such as `.agents/`, `.claude/`, `.codex/`, `.opendeploy/attempts/`,
+  `.opendeploy/deploy-attempts.jsonl`, generated `.opendeploy/*credentials*.json`
+  / `*secret*.json` / `*env*.json` files, `.gstack/`, `.git/`, and
+  dependency/build caches. Excluding `.opendeploy/` from Docker/upload context is
+  fine because it is not app source, but do not add a blanket `.opendeploy/`
+  rule to `.gitignore`; `.opendeploy/project.json` should stay commit-friendly
+  for teams. If the archive manifest includes sensitive local files, patch
   `.dockerignore` before upload; do not wait for a collision inside the image.
 - Treat top-level `.env` carefully. The OpenDeploy smart archive intentionally
   excludes `.env` / `.env.*` for safety, even when `.dockerignore` allows them.
